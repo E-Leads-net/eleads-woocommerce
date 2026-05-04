@@ -19,6 +19,11 @@ final class PageRenderer
 
     private PageApiClient $client;
 
+    /**
+     * @var array<string, bool>
+     */
+    private array $allowed_alternate_urls = [];
+
     public function __construct(SettingsRepository $settings, Language $language, SeoSitemap $sitemap, PageApiClient $client)
     {
         $this->settings = $settings;
@@ -43,7 +48,7 @@ final class PageRenderer
             $this->not_found();
         }
 
-        if (! $this->sitemap->has_slug($slug, $language) && ! $this->sitemap->has_slug($slug)) {
+        if (! $this->sitemap->has_slug($slug, $language)) {
             $this->not_found();
         }
 
@@ -57,6 +62,7 @@ final class PageRenderer
 
         $this->mark_as_found();
         status_header(200);
+        ob_start([$this, 'filter_alternate_links']);
         get_header();
         $this->render_content($page);
         get_footer();
@@ -73,6 +79,8 @@ final class PageRenderer
         $description = $this->text($page, ['meta_description', 'description']);
         $keywords = $this->text($page, ['meta_keywords', 'keywords']);
         $canonical = $this->sitemap->slug_url($slug, $language);
+        $alternates = $this->alternates($page['alternate'] ?? [], $language, $canonical);
+        $this->allowed_alternate_urls = $this->allowed_url_map(array_values($alternates));
 
         if ($title !== '') {
             add_filter('pre_get_document_title', static fn (): string => $title);
@@ -92,7 +100,7 @@ final class PageRenderer
         add_filter('aioseo_canonical_url', static fn (): string => $canonical);
         add_filter('wpseo_robots', static fn (): string => 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
 
-        add_action('wp_head', function () use ($page, $description, $keywords, $canonical, $slug, $language): void {
+        add_action('wp_head', function () use ($description, $keywords, $canonical, $alternates): void {
             if ($description !== '' && ! $this->has_seo_plugin()) {
                 echo '<meta name="description" content="' . esc_attr(wp_strip_all_tags($description)) . '">' . PHP_EOL;
             }
@@ -105,7 +113,6 @@ final class PageRenderer
                 echo '<link rel="canonical" href="' . esc_url($canonical) . '">' . PHP_EOL;
             }
 
-            $alternates = $this->alternates($page['alternate'] ?? [], $slug, $language, $canonical);
             foreach ($alternates as $code => $url) {
                 echo '<link rel="alternate" hreflang="' . esc_attr($code) . '" href="' . esc_url($url) . '">' . PHP_EOL;
             }
@@ -320,7 +327,7 @@ final class PageRenderer
     /**
      * @return array<string, string>
      */
-    private function alternates(mixed $value, string $slug, string $language, string $canonical): array
+    private function alternates(mixed $value, string $language, string $canonical): array
     {
         $items = [
             $language => $canonical,
@@ -344,14 +351,111 @@ final class PageRenderer
             }
         }
 
-        foreach ($this->language->supported() as $code => $label) {
-            unset($label);
-            if (! isset($items[$code])) {
-                $items[$code] = $this->sitemap->slug_url($slug, $code);
+        return $items;
+    }
+
+    public function filter_alternate_links(string $html): string
+    {
+        $html = preg_replace_callback(
+            '/<link\b(?=[^>]*\brel=(["\'])alternate\1)(?=[^>]*\bhreflang=)[^>]*>\s*/i',
+            function (array $matches): string {
+                $href = $this->link_attribute((string) $matches[0], 'href');
+
+                return $href !== '' && isset($this->allowed_alternate_urls[$href]) ? (string) $matches[0] : '';
+            },
+            $html
+        ) ?? $html;
+
+        $html = preg_replace_callback(
+            '/<li\b(?=[^>]*\btrp-language-switcher-container\b)[\s\S]*?<\/li>/i',
+            function (array $matches): string {
+                return $this->contains_blocked_seo_url((string) $matches[0]) ? '' : (string) $matches[0];
+            },
+            $html
+        ) ?? $html;
+
+        return preg_replace_callback(
+            '/<a\b[^>]*\bhref=(["\'])(.*?)\1[^>]*>[\s\S]*?<\/a>/i',
+            function (array $matches): string {
+                $href = $this->normalize_url((string) $matches[2]);
+
+                return $this->is_blocked_seo_url($href) ? '' : (string) $matches[0];
+            },
+            $html
+        ) ?? $html;
+    }
+
+    /**
+     * @param array<int, string> $urls
+     * @return array<string, bool>
+     */
+    private function allowed_url_map(array $urls): array
+    {
+        $items = [];
+        foreach ($urls as $url) {
+            $normalized = $this->normalize_url($url);
+            if ($normalized !== '') {
+                $items[$normalized] = true;
             }
         }
 
         return $items;
+    }
+
+    private function contains_blocked_seo_url(string $html): bool
+    {
+        if (! preg_match_all('/\bhref=(["\'])(.*?)\1/i', $html, $matches)) {
+            return false;
+        }
+
+        foreach ($matches[2] as $href) {
+            if ($this->is_blocked_seo_url($this->normalize_url((string) $href))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function is_blocked_seo_url(string $url): bool
+    {
+        if ($url === '' || isset($this->allowed_alternate_urls[$url])) {
+            return false;
+        }
+
+        $path = trim((string) wp_parse_url($url, PHP_URL_PATH), '/');
+
+        return (bool) preg_match('#^(?:[a-z]{2}/)?e-search/[0-9A-Za-z\-_]+/?$#', $path);
+    }
+
+    private function normalize_url(string $url): string
+    {
+        $url = esc_url_raw(html_entity_decode($url, ENT_QUOTES));
+        if ($url === '') {
+            return '';
+        }
+
+        $parts = wp_parse_url($url);
+        if (! is_array($parts)) {
+            return untrailingslashit($url);
+        }
+
+        $scheme = isset($parts['scheme']) ? strtolower((string) $parts['scheme']) . '://' : '';
+        $host = isset($parts['host']) ? strtolower((string) $parts['host']) : '';
+        $port = isset($parts['port']) ? ':' . (string) $parts['port'] : '';
+        $path = isset($parts['path']) ? untrailingslashit((string) $parts['path']) : '';
+        $query = isset($parts['query']) ? '?' . (string) $parts['query'] : '';
+
+        return $scheme . $host . $port . $path . $query;
+    }
+
+    private function link_attribute(string $link, string $attribute): string
+    {
+        if (! preg_match('/\b' . preg_quote($attribute, '/') . '=(["\'])(.*?)\1/i', $link, $matches)) {
+            return '';
+        }
+
+        return $this->normalize_url((string) $matches[2]);
     }
 
     private function sanitize_slug(string $slug): string
