@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Eleads\WooCommerce\Admin;
+
+final class Menu
+{
+    private Page $page;
+
+    public function __construct(Page $page)
+    {
+        $this->page = $page;
+    }
+
+    public function register(): void
+    {
+        add_menu_page(
+            __('E-Leads', 'eleads-woocommerce'),
+            __('E-Leads', 'eleads-woocommerce'),
+            'manage_woocommerce',
+            'eleads-woocommerce',
+            [$this->page, 'render'],
+            'dashicons-chart-line',
+            56
+        );
+    }
+}
