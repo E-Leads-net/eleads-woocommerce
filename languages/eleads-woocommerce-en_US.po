@@ -1,0 +1,367 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR E-Leads
+# This file is distributed under the same license as the E-Leads WooCommerce package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: E-Leads WooCommerce 0.1.0\n"
+"Report-Msgid-Bugs-To: support@e-leads.net\n"
+"POT-Creation-Date: 2026-05-04 17:52+0300\n"
+"PO-Revision-Date: 2026-05-04 17:52+0300\n"
+"Last-Translator: E-Leads <support@e-leads.net>\n"
+"Language-Team: en_US <support@e-leads.net>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Codex\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/Admin/Assets.php:34
+msgid "Генерація..."
+msgstr "Generating..."
+
+#: src/Admin/Assets.php:35
+msgid "Фід готовий"
+msgstr "Feed ready"
+
+#: src/Admin/Assets.php:36
+msgid "Помилка генерації"
+msgstr "Generation error"
+
+#: src/Admin/Assets.php:37 views/admin/tabs/export.php:63
+#: views/admin/tabs/seo.php:53
+msgid "Копіювати URL"
+msgstr "Copy URL"
+
+#: src/Admin/Assets.php:38
+msgid "Скопійовано"
+msgstr "Copied"
+
+#: src/Admin/FeedActionHandler.php:25
+msgid "You do not have permission to generate feeds."
+msgstr "You do not have permission to generate feeds."
+
+#: src/Admin/FormHandler.php:42
+msgid "You do not have permission to save these settings."
+msgstr "You do not have permission to save these settings."
+
+#: src/Admin/Menu.php:19 src/Admin/Menu.php:20 views/admin/page.php:26
+msgid "E-Leads"
+msgstr "E-Leads"
+
+#. translators: %s: WooCommerce plugin name.
+#: src/Admin/Notice.php:17
+#, php-format
+msgid ""
+"E-Leads WooCommerce requires %s to be installed and active. The module is "
+"currently disabled."
+msgstr "E-Leads WooCommerce requires %s to be installed and active. The module is currently disabled."
+
+#. translators: %s: permalinks settings URL.
+#: src/Admin/Notice.php:36
+#, php-format
+msgid ""
+"API endpoint-и E-Leads WooCommerce потребують красивих постійних посилань. "
+"Увімкніть їх у <a href=\"%s\">налаштуваннях постійних посилань</a>."
+msgstr "E-Leads WooCommerce API endpoints require pretty permalinks. Enable them in <a href=\"%s\">permalink settings</a>."
+
+#: src/Admin/Page.php:61
+msgid "You do not have permission to access this page."
+msgstr "You do not have permission to access this page."
+
+#: src/Admin/Page.php:112
+msgid "Налаштування експорту"
+msgstr "Export settings"
+
+#: src/Admin/Page.php:116
+msgid "SEO"
+msgstr "SEO"
+
+#: src/Admin/Page.php:119
+msgid "API Key"
+msgstr "API Key"
+
+#: src/Admin/PluginLinks.php:18
+msgid "Settings"
+msgstr "Settings"
+
+#: src/Admin/PluginLinks.php:35
+msgid "Docs"
+msgstr "Docs"
+
+#: src/Admin/PluginLinks.php:40
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+#: src/Admin/PluginLinks.php:45
+msgid "Terms"
+msgstr "Terms"
+
+#: src/Admin/PluginLinks.php:50
+msgid "Security"
+msgstr "Security"
+
+#: src/Feed/OfferBuilder.php:379
+msgid "Опції"
+msgstr "Options"
+
+#: src/Seo/PageRenderer.php:279
+msgid "Not found"
+msgstr "Not found"
+
+#: views/admin/page.php:28
+msgid "WooCommerce export and synchronization module"
+msgstr "WooCommerce export and synchronization module"
+
+#: views/admin/page.php:36
+msgid "WooCommerce active"
+msgstr "WooCommerce active"
+
+#: views/admin/page.php:44
+msgid "Налаштування збережено."
+msgstr "Settings saved."
+
+#: views/admin/page.php:49
+msgid "Фід згенеровано."
+msgstr "Feed generated."
+
+#: views/admin/page.php:53
+msgid "Не вдалося згенерувати фід."
+msgstr "Could not generate feed."
+
+#: views/admin/page.php:57
+msgid "E-Leads tabs"
+msgstr "E-Leads tabs"
+
+#: views/admin/tabs/api-key.php:19 views/admin/tabs/api-key.php:22
+msgid "API ключ проекту"
+msgstr "Project API key"
+
+#: views/admin/tabs/api-key.php:26
+msgid "Зберегти ключ"
+msgstr "Save key"
+
+#: views/admin/tabs/api-key.php:32
+msgid "Ключ перевірено. Налаштування модуля відкриті."
+msgstr "Key verified. Module settings are unlocked."
+
+#: views/admin/tabs/api-key.php:33
+msgid "Ключ не пройшов перевірку. Налаштування модуля закриті."
+msgstr "Key validation failed. Module settings are locked."
+
+#: views/admin/tabs/api-key.php:42
+#, php-format
+msgid ""
+"Введіть API ключ проекту E-Leads для доступу до налаштувань модуля. Ключ "
+"можна отримати в <a href=\"%s\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">дашборді E-Leads</a>."
+msgstr "Enter the E-Leads project API key to access module settings. You can get the key in the <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">E-Leads dashboard</a>."
+
+#: views/admin/tabs/export.php:26
+#, php-format
+msgid ""
+"Введіть і збережіть дійсний API ключ E-Leads, щоб керувати налаштуваннями "
+"експорту. <a href=\"%s\">Перейти до вкладки API Key</a>."
+msgstr "Enter and save a valid E-Leads API key to manage export settings. <a href=\"%s\">Go to the API Key tab</a>."
+
+#: views/admin/tabs/export.php:42
+msgid "URL фіду"
+msgstr "Feed URL"
+
+#: views/admin/tabs/export.php:60
+msgid "Перегенерувати фід"
+msgstr "Regenerate feed"
+
+#: views/admin/tabs/export.php:71
+msgid "Завантажити"
+msgstr "Download"
+
+#: views/admin/tabs/export.php:76
+#, php-format
+msgid "Фід готовий, пропозицій: %d"
+msgstr "Feed ready, offers: %d"
+
+#: views/admin/tabs/export.php:77
+msgid "Фід ще не створено"
+msgstr "Feed has not been created yet"
+
+#: views/admin/tabs/export.php:84
+#, php-format
+msgid "Товарів: %1$d / %2$d"
+msgstr "Products: %1$d / %2$d"
+
+#: views/admin/tabs/export.php:92
+msgid "Синхронізація"
+msgstr "Synchronization"
+
+#: views/admin/tabs/export.php:97
+msgid "Увімкнути синхронізацію"
+msgstr "Enable synchronization"
+
+#: views/admin/tabs/export.php:102
+msgid "Віджет E-Leads"
+msgstr "E-Leads widget"
+
+#: views/admin/tabs/export.php:107
+msgid "Увімкнути віджет E-Leads на сайті"
+msgstr "Enable the E-Leads widget on the site"
+
+#. translators: 1: service domain, 2: docs URL, 3: landing URL, 4: privacy policy URL, 5: terms URL, 6: cookie policy URL, 7: security URL.
+#: views/admin/tabs/export.php:115
+#, php-format
+msgid ""
+"Після увімкнення сайт буде завантажувати скрипт віджета E-Leads із "
+"зовнішнього сервісу <code>%1$s</code>. Увімкнення цієї опції означає згоду "
+"на підключення сервісу E-Leads на публічних сторінках сайту. Докладніше: <a "
+"href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">документація</"
+"a>, <a href=\"%3$s\" target=\"_blank\" rel=\"noopener noreferrer\">про E-"
+"Leads</a>, <a href=\"%4$s\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">політика конфіденційності</a>, <a href=\"%5$s\" "
+"target=\"_blank\" rel=\"noopener noreferrer\">умови використання</a>, <a "
+"href=\"%6$s\" target=\"_blank\" rel=\"noopener noreferrer\">cookie policy</"
+"a>, <a href=\"%7$s\" target=\"_blank\" rel=\"noopener noreferrer\">security</"
+"a>."
+msgstr "When enabled, the site will load the E-Leads widget script from the external service <code>%1$s</code>. Enabling this option means you agree to connect the E-Leads service on public site pages. Learn more: <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">documentation</a>, <a href=\"%3$s\" target=\"_blank\" rel=\"noopener noreferrer\">about E-Leads</a>, <a href=\"%4$s\" target=\"_blank\" rel=\"noopener noreferrer\">privacy policy</a>, <a href=\"%5$s\" target=\"_blank\" rel=\"noopener noreferrer\">terms of service</a>, <a href=\"%6$s\" target=\"_blank\" rel=\"noopener noreferrer\">cookie policy</a>, <a href=\"%7$s\" target=\"_blank\" rel=\"noopener noreferrer\">security</a>."
+
+#: views/admin/tabs/export.php:139
+msgid "Категорії"
+msgstr "Categories"
+
+#: views/admin/tabs/export.php:143
+msgid "Позначити всі"
+msgstr "Select all"
+
+#: views/admin/tabs/export.php:147
+msgid "Зняти позначення"
+msgstr "Clear selection"
+
+#: views/admin/tabs/export.php:157
+msgid "Категорії не знайдено"
+msgstr "No categories found"
+
+#: views/admin/tabs/export.php:158
+msgid ""
+"Створіть категорії товарів WooCommerce, щоб вибрати їх для вивантаження."
+msgstr "Create WooCommerce product categories to select them for export."
+
+#: views/admin/tabs/export.php:174
+msgid ""
+"Позначте категорії для вивантаження. Якщо нічого не вибрано — товари не "
+"вивантажуються."
+msgstr "Select categories for export. If nothing is selected, products are not exported."
+
+#: views/admin/tabs/export.php:180
+msgid "Атрибути для фільтрації"
+msgstr "Filter attributes"
+
+#: views/admin/tabs/export.php:190
+msgid "Увімкнути вибір атрибутів для фільтрації"
+msgstr "Enable attribute selection for filtering"
+
+#: views/admin/tabs/export.php:197
+msgid "Атрибути WooCommerce ще не створені."
+msgstr "WooCommerce attributes have not been created yet."
+
+#: views/admin/tabs/export.php:214
+msgid "Опції для фільтрації"
+msgstr "Filter options"
+
+#: views/admin/tabs/export.php:224
+msgid "Увімкнути вибір опцій для фільтрації"
+msgstr "Enable option selection for filtering"
+
+#: views/admin/tabs/export.php:231
+msgid "Опції будуть доступні після створення атрибутів WooCommerce."
+msgstr "Options will be available after WooCommerce attributes are created."
+
+#: views/admin/tabs/export.php:247
+msgid "Групування товарів"
+msgstr "Product grouping"
+
+#: views/admin/tabs/export.php:252
+msgid "Групувати варіації товару в одну пропозицію"
+msgstr "Group product variations into one offer"
+
+#: views/admin/tabs/export.php:257
+msgid "Параметри експорту"
+msgstr "Export parameters"
+
+#: views/admin/tabs/export.php:260
+msgid "Розмір зображень"
+msgstr "Image size"
+
+#: views/admin/tabs/export.php:264
+msgid "Оригінал"
+msgstr "Original"
+
+#: views/admin/tabs/export.php:269
+msgid "Ключ доступу (необов'язково)"
+msgstr "Access key (optional)"
+
+#: views/admin/tabs/export.php:274
+msgid "Назва магазину"
+msgstr "Store name"
+
+#: views/admin/tabs/export.php:279
+msgid "Email"
+msgstr "Email"
+
+#: views/admin/tabs/export.php:284
+msgid "URL магазину"
+msgstr "Store URL"
+
+#: views/admin/tabs/export.php:289
+msgid "Валюта"
+msgstr "Currency"
+
+#: views/admin/tabs/export.php:294
+msgid "Ліміт зображень (picture)"
+msgstr "Image limit (picture)"
+
+#: views/admin/tabs/export.php:299
+msgid "Джерело short_description"
+msgstr "short_description source"
+
+#: views/admin/tabs/export.php:301
+msgid "Короткий опис (анотація)"
+msgstr "Short description (annotation)"
+
+#: views/admin/tabs/export.php:302
+msgid "Meta description"
+msgstr "Meta description"
+
+#: views/admin/tabs/export.php:303
+msgid "Повний опис"
+msgstr "Full description"
+
+#: views/admin/tabs/export.php:310 views/admin/tabs/seo.php:69
+msgid "Застосувати"
+msgstr "Apply"
+
+#: views/admin/tabs/seo.php:21
+msgid "SEO сторінки"
+msgstr "SEO pages"
+
+#: views/admin/tabs/seo.php:26
+msgid "SEO сторінки недоступні для поточного API ключа E-Leads."
+msgstr "SEO pages are not available for the current E-Leads API key."
+
+#: views/admin/tabs/seo.php:42
+msgid "Увімкнути SEO сторінки E-Leads"
+msgstr "Enable E-Leads SEO pages"
+
+#: views/admin/tabs/seo.php:48
+msgid "URL sitemap"
+msgstr "Sitemap URL"
+
+#: views/admin/tabs/seo.php:56
+msgid "Відкрити"
+msgstr "Open"
+
+#: views/admin/tabs/seo.php:62
+msgid ""
+"Після увімкнення модуль створить sitemap і відкриє сторінки /e-search/{slug} "
+"для SEO контенту з E-Leads."
+msgstr "After enabling, the module will create a sitemap and open /e-search/{slug} pages for SEO content from E-Leads."

@@ -40,5 +40,11 @@ register_deactivation_hook(__FILE__, static function (): void {
 });
 
 add_action('plugins_loaded', static function (): void {
+    load_plugin_textdomain(
+        'eleads-woocommerce',
+        false,
+        dirname(plugin_basename(__FILE__)) . '/languages'
+    );
+
     \Eleads\WooCommerce\Plugin::instance()->boot();
 });
