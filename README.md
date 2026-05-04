@@ -7,7 +7,7 @@ WooCommerce plugin for E-Leads product export, synchronization and feed settings
 This plugin connects to E-Leads services when the store owner enters an API key and enables the relevant features.
 
 - API key validation, feed discovery, product synchronization, and SEO/sitemap sync use `https://dashboard.e-leads.net/`.
-- The optional E-Leads widget is disabled by default. When enabled by the store owner, public pages load the widget script from `https://api.e-leads.net/`.
+- The optional E-Leads widget is disabled by default. When enabled by the store owner, public pages load the widget script from `https://api.e-leads.net/v1/widgets-loader.js`.
 
 Service information and policies:
 
@@ -27,6 +27,6 @@ Service information and policies:
 - `src/Admin/` - admin menu, notices, pages and settings screens.
 - `src/Settings/` - options model and validation.
 - `src/Feed/` - feed query, generation, storage and download endpoints.
-- `src/Cron/` - scheduled synchronization.
+- `src/Sync/` - WooCommerce product create, update and delete synchronization.
 
 The plugin does not boot its main functionality when WooCommerce is missing.

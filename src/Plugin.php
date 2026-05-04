@@ -66,17 +66,7 @@ final class Plugin
             return;
         }
 
-        add_action('init', [$this, 'load_textdomain']);
         $this->register_hooks();
-    }
-
-    public function load_textdomain(): void
-    {
-        load_plugin_textdomain(
-            'eleads-woocommerce',
-            false,
-            dirname(plugin_basename(ELEADS_WOOCOMMERCE_FILE)) . '/languages'
-        );
     }
 
     private function register_hooks(): void
@@ -116,6 +106,7 @@ final class Plugin
 
         add_action('init', [Endpoint::class, 'register_rewrite_rules']);
         add_action('init', [PublicEndpoint::class, 'register_rewrite_rules']);
+        add_action('init', [$this, 'maybe_flush_rewrite_rules'], 20);
         add_filter('query_vars', [$endpoint, 'query_vars']);
         add_filter('query_vars', [$api_endpoint, 'query_vars']);
         add_action('template_redirect', [$endpoint, 'serve']);
@@ -155,5 +146,21 @@ final class Plugin
                 2
             );
         }
+    }
+
+    public function maybe_flush_rewrite_rules(): void
+    {
+        $option = 'eleads_woocommerce_rewrite_version';
+        if ((string) get_option($option, '') === ELEADS_WOOCOMMERCE_VERSION) {
+            return;
+        }
+
+        $legacy_sitemap = ABSPATH . 'e-search/sitemap.xml';
+        if (is_file($legacy_sitemap)) {
+            wp_delete_file($legacy_sitemap);
+        }
+
+        flush_rewrite_rules(false);
+        update_option($option, ELEADS_WOOCOMMERCE_VERSION, false);
     }
 }

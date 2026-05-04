@@ -17,23 +17,47 @@
         });
     }
 
+    const filterPanel = (key) => document.querySelector(`[data-eleads-filter-panel="${key}"]`);
+    const filterActions = (key) => Array.from(document.querySelectorAll(`[data-eleads-filter-actions="${key}"]`));
+    const filterCheckboxes = (key) => {
+        const panel = filterPanel(key);
+
+        return panel ? Array.from(panel.querySelectorAll('input[type="checkbox"]')) : [];
+    };
+
     document.querySelectorAll('[data-eleads-filter-toggle]').forEach((toggle) => {
         const key = toggle.getAttribute('data-eleads-filter-toggle');
-        const panel = document.querySelector(`[data-eleads-filter-panel="${key}"]`);
+        const panel = filterPanel(key);
 
-        if (!panel) {
+        if (!key || !panel) {
             return;
         }
 
         const update = () => {
-            panel.classList.toggle('is-disabled', !toggle.checked);
-            panel.querySelectorAll('input, select, textarea, button').forEach((field) => {
-                field.disabled = !toggle.checked;
+            panel.classList.toggle('is-hidden', !toggle.checked);
+            filterActions(key).forEach((actions) => {
+                actions.classList.toggle('is-hidden', !toggle.checked);
             });
         };
 
         toggle.addEventListener('change', update);
         update();
+    });
+
+    document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const button = target ? target.closest('[data-eleads-filter-action][data-eleads-filter-target]') : null;
+
+        if (!button) {
+            return;
+        }
+
+        const key = button.getAttribute('data-eleads-filter-target') || '';
+        const checked = button.getAttribute('data-eleads-filter-action') === 'select';
+
+        filterCheckboxes(key).forEach((checkbox) => {
+            checkbox.checked = checked;
+        });
     });
 
     document.querySelectorAll('[data-eleads-copy]').forEach((button) => {

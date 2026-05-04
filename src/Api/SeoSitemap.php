@@ -10,11 +10,7 @@ final class SeoSitemap
 {
     private const DIR = 'e-search';
     private const FILE = 'sitemap.xml';
-
-    public function path(): string
-    {
-        return ABSPATH . self::DIR . '/' . self::FILE;
-    }
+    private const OPTION = 'eleads_woocommerce_seo_sitemap_slugs';
 
     public function url(): string
     {
@@ -23,21 +19,12 @@ final class SeoSitemap
 
     public function create_from_dashboard(string $api_key): void
     {
-        $path = $this->path();
-        $dir = dirname($path);
-        if (! is_dir($dir)) {
-            wp_mkdir_p($dir);
-        }
-
-        file_put_contents($path, $this->build($this->fetch_slugs($api_key)), LOCK_EX);
+        $this->save($this->fetch_slugs($api_key));
     }
 
     public function remove(): void
     {
-        $path = $this->path();
-        if (is_file($path)) {
-            unlink($path);
-        }
+        delete_option(self::OPTION);
     }
 
     public function add_slug(string $slug, string $language = ''): bool
@@ -47,43 +34,39 @@ final class SeoSitemap
             return false;
         }
 
-        $path = $this->path();
-        $this->ensure_exists($path);
+        $items = $this->slugs();
+        $items[] = [
+            'slug' => $slug,
+            'lang' => $this->sanitize_language($language),
+        ];
 
-        if ($this->has_slug($slug, $language)) {
-            return true;
-        }
+        $this->save($items);
 
-        $content = (string) file_get_contents($path);
-        if (! str_contains($content, '</urlset>')) {
-            $content = $this->skeleton();
-        }
-
-        $loc = $this->slug_url($slug, $language);
-        $entry = '  <url><loc>' . esc_xml($loc) . '</loc></url>' . PHP_EOL;
-
-        return file_put_contents($path, str_replace('</urlset>', $entry . '</urlset>', $content), LOCK_EX) !== false;
+        return true;
     }
 
     public function remove_slug(string $slug, string $language = ''): bool
     {
         $slug = $this->sanitize_slug($slug);
-        $path = $this->path();
-        if ($slug === '' || ! is_file($path)) {
+        if ($slug === '') {
             return false;
         }
 
-        $content = (string) file_get_contents($path);
-        if (trim($language) !== '') {
-            $loc = $this->slug_url($slug, $language);
-            $pattern = '~\s*<url>\s*<loc>' . preg_quote($loc, '~') . '</loc>\s*</url>\s*~i';
-        } else {
-            $pattern = '~\s*<url>\s*<loc>[^<]*/' . preg_quote(self::DIR, '~') . '/' . preg_quote(rawurlencode($slug), '~') . '</loc>\s*</url>\s*~i';
-        }
+        $language = $this->sanitize_language($language);
+        $items = array_values(array_filter(
+            $this->slugs(),
+            static function (array $item) use ($slug, $language): bool {
+                if ((string) $item['slug'] !== $slug) {
+                    return true;
+                }
 
-        $updated = preg_replace($pattern, PHP_EOL, $content);
+                return $language !== '' && (string) $item['lang'] !== $language;
+            }
+        ));
 
-        return is_string($updated) && file_put_contents($path, $updated, LOCK_EX) !== false;
+        $this->save($items);
+
+        return true;
     }
 
     public function update_slug(string $old_slug, string $new_slug, string $old_language = '', string $new_language = ''): bool
@@ -96,17 +79,18 @@ final class SeoSitemap
     public function has_slug(string $slug, string $language = ''): bool
     {
         $slug = $this->sanitize_slug($slug);
-        $path = $this->path();
-        if ($slug === '' || ! is_file($path)) {
+        if ($slug === '') {
             return false;
         }
 
-        $content = (string) file_get_contents($path);
-        if (trim($language) !== '') {
-            return str_contains($content, '<loc>' . $this->slug_url($slug, $language) . '</loc>');
+        $language = $this->sanitize_language($language);
+        foreach ($this->slugs() as $item) {
+            if ((string) $item['slug'] === $slug && (string) $item['lang'] === $language) {
+                return true;
+            }
         }
 
-        return (bool) preg_match('~<loc>[^<]*/' . preg_quote(self::DIR, '~') . '/' . preg_quote(rawurlencode($slug), '~') . '</loc>~i', $content);
+        return false;
     }
 
     public function slug_url(string $slug, string $language = ''): string
@@ -122,23 +106,50 @@ final class SeoSitemap
         return user_trailingslashit(home_url('/' . $prefix . self::DIR . '/' . rawurlencode($slug)));
     }
 
-    private function ensure_exists(string $path): void
+    public function render(): void
     {
-        $dir = dirname($path);
-        if (! is_dir($dir)) {
-            wp_mkdir_p($dir);
-        }
-
-        if (! is_file($path)) {
-            file_put_contents($path, $this->skeleton(), LOCK_EX);
-        }
+        status_header(200);
+        header('Content-Type: application/xml; charset=utf-8');
+        echo $this->build($this->slugs()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        exit;
     }
 
-    private function skeleton(): string
+    /**
+     * @return array<int, array{slug: string, lang: string}>
+     */
+    private function slugs(): array
     {
-        return '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL
-            . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL
-            . '</urlset>' . PHP_EOL;
+        $items = get_option(self::OPTION, []);
+        if (! is_array($items)) {
+            return [];
+        }
+
+        $slugs = [];
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $slug = $this->sanitize_slug((string) ($item['slug'] ?? ''));
+            if ($slug === '') {
+                continue;
+            }
+
+            $slugs[] = [
+                'slug' => $slug,
+                'lang' => $this->sanitize_language((string) ($item['lang'] ?? '')),
+            ];
+        }
+
+        return $this->unique($slugs);
+    }
+
+    /**
+     * @param array<int, array{slug: string, lang: string}> $slugs
+     */
+    private function save(array $slugs): void
+    {
+        update_option(self::OPTION, $this->unique($slugs), false);
     }
 
     /**
@@ -188,7 +199,7 @@ final class SeoSitemap
             }
         }
 
-        return $slugs;
+        return $this->unique($slugs);
     }
 
     /**
@@ -196,29 +207,46 @@ final class SeoSitemap
      */
     private function build(array $slugs): string
     {
-        if ($slugs === []) {
-            return $this->skeleton();
-        }
-
         $lines = [
             '<?xml version="1.0" encoding="UTF-8"?>',
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
         ];
-        $seen = [];
 
-        foreach ($slugs as $item) {
-            $loc = $this->slug_url($item['slug'], $item['lang']);
-            if (isset($seen[$loc])) {
-                continue;
-            }
-
-            $seen[$loc] = true;
-            $lines[] = '  <url><loc>' . esc_xml($loc) . '</loc></url>';
+        foreach ($this->unique($slugs) as $item) {
+            $lines[] = '  <url><loc>' . esc_xml($this->slug_url($item['slug'], $item['lang'])) . '</loc></url>';
         }
 
         $lines[] = '</urlset>';
 
         return implode(PHP_EOL, $lines) . PHP_EOL;
+    }
+
+    /**
+     * @param array<int, array{slug: string, lang: string}> $slugs
+     * @return array<int, array{slug: string, lang: string}>
+     */
+    private function unique(array $slugs): array
+    {
+        $items = [];
+        $seen = [];
+
+        foreach ($slugs as $item) {
+            $slug = $this->sanitize_slug((string) ($item['slug'] ?? ''));
+            if ($slug === '') {
+                continue;
+            }
+
+            $language = $this->sanitize_language((string) ($item['lang'] ?? ''));
+            $key = $language . ':' . $slug;
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $items[] = ['slug' => $slug, 'lang' => $language];
+        }
+
+        return $items;
     }
 
     private function sanitize_slug(string $slug): string
@@ -235,13 +263,9 @@ final class SeoSitemap
 
     private function default_language(): string
     {
-        if (class_exists(Language::class)) {
-            return (new Language())->default();
-        }
-
         $locale = get_locale();
         $language = strtolower(substr($locale, 0, 2));
 
-        return $language !== '' ? $this->sanitize_language($language) : 'en';
+        return $language !== '' ? $this->sanitize_language($language) : (new Language())->default();
     }
 }

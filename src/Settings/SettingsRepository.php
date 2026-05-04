@@ -53,7 +53,7 @@ final class SettingsRepository
             'seo_pages_enabled'        => false,
             'sync_enabled'             => false,
             'widgets_enabled'          => false,
-            'image_size'               => '200x200',
+            'image_size'               => 'thumbnail',
             'feed_key'                 => '',
             'store_name'               => get_bloginfo('name'),
             'email'                    => get_option('admin_email'),

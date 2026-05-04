@@ -38,17 +38,17 @@ final class Auth
     private function authorization_header(): ?string
     {
         if (! empty($_SERVER['HTTP_AUTHORIZATION'])) {
-            return (string) $_SERVER['HTTP_AUTHORIZATION'];
+            return sanitize_text_field((string) wp_unslash($_SERVER['HTTP_AUTHORIZATION']));
         }
 
         if (! empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-            return (string) $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+            return sanitize_text_field((string) wp_unslash($_SERVER['REDIRECT_HTTP_AUTHORIZATION']));
         }
 
         if (function_exists('getallheaders')) {
             foreach (getallheaders() as $name => $value) {
                 if (strcasecmp((string) $name, 'Authorization') === 0) {
-                    return (string) $value;
+                    return sanitize_text_field((string) $value);
                 }
             }
         }

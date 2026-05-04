@@ -44,7 +44,8 @@ final class Endpoint
             $this->serve_language($query_language);
         }
 
-        $path = (string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw((string) wp_unslash($_SERVER['REQUEST_URI'])) : '';
+        $path = (string) wp_parse_url($request_uri, PHP_URL_PATH);
         if (! preg_match('#^/eleads-yml/([a-z]{2})\.xml$#', $path, $matches)) {
             return;
         }
@@ -58,10 +59,11 @@ final class Endpoint
         $settings = $this->settings->all();
         $access_key = (string) $settings['feed_key'];
 
-        if ($access_key !== '' && (string) ($_GET['key'] ?? '') !== $access_key) {
+        $request_key = isset($_GET['key']) ? sanitize_text_field((string) wp_unslash($_GET['key'])) : '';
+        if ($access_key !== '' && $request_key !== $access_key) {
             status_header(401);
             header('Content-Type: text/plain; charset=utf-8');
-            echo 'Forbidden';
+            echo esc_html__('Forbidden', 'eleads-woocommerce');
             exit;
         }
 
@@ -69,14 +71,14 @@ final class Endpoint
         if (! is_file($feed_path)) {
             status_header(404);
             header('Content-Type: text/plain; charset=utf-8');
-            echo 'Not Found';
+            echo esc_html__('Not Found', 'eleads-woocommerce');
             exit;
         }
 
         status_header(200);
         header('Content-Type: application/xml; charset=utf-8');
         header('Content-Length: ' . (string) filesize($feed_path));
-        readfile($feed_path);
+        readfile($feed_path); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
         exit;
     }
 

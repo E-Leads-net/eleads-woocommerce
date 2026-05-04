@@ -12,18 +12,20 @@ if (! defined('ABSPATH')) {
 }
 ?>
 
-<div class="eleads-filter-list">
+<ul class="eleads-category-tree">
     <?php foreach ($attributes as $attribute) : ?>
         <?php $slug = (string) $attribute['slug']; ?>
-        <label class="eleads-check eleads-check--pill">
-            <input
-                type="checkbox"
-                name="<?php echo esc_attr($field_name); ?>[]"
-                value="<?php echo esc_attr($slug); ?>"
-                <?php checked(in_array($slug, $selected_slugs, true)); ?>
-            >
-            <span class="eleads-check__box" aria-hidden="true"></span>
-            <span class="eleads-check__label"><?php echo esc_html((string) $attribute['name']); ?></span>
-        </label>
+        <li class="eleads-category-tree__item">
+            <label class="eleads-check">
+                <input
+                    type="checkbox"
+                    name="<?php echo esc_attr($field_name); ?>[]"
+                    value="<?php echo esc_attr($slug); ?>"
+                    <?php checked(in_array($slug, $selected_slugs, true)); ?>
+                >
+                <span class="eleads-check__box" aria-hidden="true"></span>
+                <span class="eleads-check__label"><?php echo esc_html((string) $attribute['name']); ?></span>
+            </label>
+        </li>
     <?php endforeach; ?>
-</div>
+</ul>

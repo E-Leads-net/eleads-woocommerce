@@ -172,21 +172,24 @@ final class OfferBuilder
             $image_ids = array_slice($image_ids, 0, $limit);
         }
 
-        $size = match ($image_size) {
-            'full' => 'full',
-            '400x400' => [400, 400],
-            default => [200, 200],
-        };
-
         $urls = [];
         foreach ($image_ids as $image_id) {
-            $url = wp_get_attachment_image_url((int) $image_id, $size);
+            $url = wp_get_attachment_image_url((int) $image_id, $this->image_size($image_size));
             if ($url !== false) {
                 $urls[] = $url;
             }
         }
 
         return $urls;
+    }
+
+    private function image_size(string $image_size): string
+    {
+        if ($image_size === 'full') {
+            return 'full';
+        }
+
+        return array_key_exists($image_size, wp_get_registered_image_subsizes()) ? $image_size : 'thumbnail';
     }
 
     private function short_description(\WC_Product $product, string $source): string

@@ -51,6 +51,7 @@ final class PublicEndpoint
         add_rewrite_rule('^eleads-yml/api/feeds/?$', 'index.php?eleads_api=feeds', 'top');
         add_rewrite_rule('^e-search/api/languages/?$', 'index.php?eleads_api=languages', 'top');
         add_rewrite_rule('^e-search/api/sitemap-sync/?$', 'index.php?eleads_api=sitemap-sync', 'top');
+        add_rewrite_rule('^e-search/sitemap\.xml/?$', 'index.php?eleads_api=seo-sitemap', 'top');
         add_rewrite_rule('^([a-z]{2})/e-search/([0-9A-Za-z\-_]+)/?$', 'index.php?eleads_seo_lang=$matches[1]&eleads_seo_slug=$matches[2]', 'top');
         add_rewrite_rule('^e-search/([0-9A-Za-z\-_]+)/?$', 'index.php?eleads_seo_slug=$matches[1]', 'top');
     }
@@ -80,13 +81,15 @@ final class PublicEndpoint
             $this->serve_seo_page($slug, (string) get_query_var('eleads_seo_lang'));
         }
 
-        $path = trim((string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH), '/');
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw((string) wp_unslash($_SERVER['REQUEST_URI'])) : '';
+        $path = trim((string) wp_parse_url($request_uri, PHP_URL_PATH), '/');
         $path_map = [
             'eleads-yml/api/generate'   => 'generate',
             'eleads-yml/api/status'     => 'status',
             'eleads-yml/api/feeds'      => 'feeds',
             'e-search/api/languages'    => 'languages',
             'e-search/api/sitemap-sync' => 'sitemap-sync',
+            'e-search/sitemap.xml'      => 'seo-sitemap',
         ];
 
         if (isset($path_map[$path])) {
@@ -110,7 +113,7 @@ final class PublicEndpoint
             $this->require_method($method, 'POST');
             $this->require_auth();
             $payload = $this->payload();
-            $language = $this->language->normalize((string) ($_GET['lang'] ?? $payload['lang'] ?? $payload['language'] ?? ''));
+            $language = $this->language->normalize($this->request_language($payload));
             $job = $this->generator->start($language);
             $this->json(['status' => 'accepted', 'lang' => $language, 'job' => $this->okay_job($job)]);
         }
@@ -118,7 +121,7 @@ final class PublicEndpoint
         if ($api === 'status') {
             $this->require_method($method, 'GET');
             $this->require_auth();
-            $language = $this->language->normalize((string) ($_GET['lang'] ?? ''));
+            $language = $this->language->normalize($this->query_string('lang'));
             $state = $this->generator->process_next_batch($language);
             $this->json($this->okay_job($state));
         }
@@ -158,7 +161,7 @@ final class PublicEndpoint
             $action = sanitize_key((string) ($payload['action'] ?? ''));
             $slug = (string) ($payload['slug'] ?? '');
             $new_slug = (string) ($payload['new_slug'] ?? '');
-            $language = sanitize_key((string) ($_GET['lang'] ?? $payload['lang'] ?? $payload['language'] ?? ''));
+            $language = sanitize_key($this->request_language($payload));
             $new_language = sanitize_key((string) ($payload['new_lang'] ?? $payload['new_language'] ?? $language));
 
             if ($action === '' || trim($slug) === '') {
@@ -184,6 +187,11 @@ final class PublicEndpoint
                 'status' => 'ok',
                 'url'    => $this->sitemap->slug_url($action === 'update' ? $new_slug : $slug, $action === 'update' ? $new_language : $language),
             ]);
+        }
+
+        if ($api === 'seo-sitemap') {
+            $this->require_method($method, 'GET');
+            $this->sitemap->render();
         }
 
         $this->json(['error' => 'not_found'], 404);
@@ -214,7 +222,7 @@ final class PublicEndpoint
      */
     private function payload(): array
     {
-        $payload = $_POST;
+        $payload = wp_unslash($_POST);
         if ($payload !== []) {
             return is_array($payload) ? $payload : [];
         }
@@ -227,6 +235,19 @@ final class PublicEndpoint
         $decoded = json_decode($raw, true);
 
         return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function request_language(array $payload): string
+    {
+        return sanitize_key((string) ($this->query_string('lang') ?: ($payload['lang'] ?? $payload['language'] ?? '')));
+    }
+
+    private function query_string(string $key): string
+    {
+        return isset($_GET[$key]) ? sanitize_key((string) wp_unslash($_GET[$key])) : '';
     }
 
     /**

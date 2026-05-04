@@ -16,14 +16,14 @@ final class Assets
             'eleads-woocommerce-admin',
             ELEADS_WOOCOMMERCE_URL . 'assets/admin.css',
             [],
-            ELEADS_WOOCOMMERCE_VERSION
+            $this->asset_version('assets/admin.css')
         );
 
         wp_enqueue_script(
             'eleads-woocommerce-admin',
             ELEADS_WOOCOMMERCE_URL . 'assets/admin.js',
             [],
-            ELEADS_WOOCOMMERCE_VERSION,
+            $this->asset_version('assets/admin.js'),
             true
         );
 
@@ -38,5 +38,12 @@ final class Assets
                 'copied'     => __('Скопійовано', 'eleads-woocommerce'),
             ],
         ]);
+    }
+
+    private function asset_version(string $relative_path): string
+    {
+        $path = ELEADS_WOOCOMMERCE_PATH . $relative_path;
+
+        return ELEADS_WOOCOMMERCE_VERSION . '-' . (file_exists($path) ? (string) filemtime($path) : '0');
     }
 }

@@ -284,11 +284,16 @@
     display: inline-flex;
     gap: 12px;
     min-height: 34px;
+    position: relative;
 }
 
 .eleads-toggle input {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
     height: 1px;
+    margin: 0;
     opacity: 0;
+    overflow: hidden;
     position: absolute;
     width: 1px;
 }
@@ -372,7 +377,8 @@
     width: 36px;
 }
 
-.eleads-category-panel {
+.eleads-category-panel,
+.eleads-filter-panel {
     max-height: 360px;
     overflow: auto;
     padding: 14px 16px;
@@ -398,11 +404,16 @@
     display: inline-flex;
     gap: 9px;
     min-height: 28px;
+    position: relative;
 }
 
 .eleads-check input {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
     height: 1px;
+    margin: 0;
     opacity: 0;
+    overflow: hidden;
     position: absolute;
     width: 1px;
 }
@@ -457,18 +468,6 @@
     font-size: 12px;
 }
 
-.eleads-check--pill {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 999px;
-    padding: 8px 11px;
-}
-
-.eleads-check--pill:has(input:checked) {
-    background: #eef6ff;
-    border-color: #b8d7f0;
-}
-
 .eleads-inline-actions {
     align-items: center;
     color: #b6c2cf;
@@ -506,19 +505,24 @@
     margin: 0;
 }
 
-.eleads-filter-panel {
-    padding: 14px;
-    transition: opacity 120ms ease;
-}
-
-.eleads-filter-panel.is-disabled {
-    opacity: 0.55;
-}
-
-.eleads-filter-list {
+.eleads-filter-header__controls {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 18px;
+    justify-content: flex-end;
+}
+
+.eleads-filter-panel.is-hidden {
+    display: none;
+}
+
+.eleads-filter-actions {
+    display: inline-flex;
+}
+
+.eleads-filter-actions.is-hidden {
+    display: none;
 }
 
 .eleads-empty-text {
@@ -601,15 +605,43 @@
 }
 
 .eleads-card--api {
+    display: grid;
+    gap: 18px;
+    max-width: 920px;
+    padding: 28px 30px;
+}
+
+.eleads-card--api h2 {
+    margin-bottom: 0;
+}
+
+.eleads-card--api .description {
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.eleads-api-key-form {
+    display: grid;
+    gap: 14px;
+}
+
+.eleads-api-key-form .eleads-field--wide {
     max-width: 820px;
-    padding: 24px;
+}
+
+.eleads-api-key-form__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .eleads-api-status {
     border-radius: 6px;
     display: inline-flex;
     font-weight: 600;
-    margin: 16px 0 0;
+    margin: 0;
     padding: 8px 12px;
 }
 

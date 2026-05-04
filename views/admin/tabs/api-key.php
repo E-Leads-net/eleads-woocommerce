@@ -18,22 +18,26 @@ if (! defined('ABSPATH')) {
         <div class="eleads-card eleads-card--api">
             <h2 id="eleads-api-key-title"><?php echo esc_html__('API ключ проекту', 'eleads-woocommerce'); ?></h2>
 
-            <label class="eleads-field eleads-field--wide">
-                <span class="screen-reader-text"><?php echo esc_html__('API ключ проекту', 'eleads-woocommerce'); ?></span>
-                <input type="text" name="api_key" value="<?php echo esc_attr((string) $settings['api_key']); ?>" autocomplete="off" placeholder="eleads_...">
-            </label>
+            <div class="eleads-api-key-form">
+                <label class="eleads-field eleads-field--wide">
+                    <span class="screen-reader-text"><?php echo esc_html__('API ключ проекту', 'eleads-woocommerce'); ?></span>
+                    <input type="text" name="api_key" value="<?php echo esc_attr((string) $settings['api_key']); ?>" autocomplete="off" placeholder="eleads_...">
+                </label>
 
-            <button type="submit" class="button button-primary"><?php echo esc_html__('Зберегти ключ', 'eleads-woocommerce'); ?></button>
+                <div class="eleads-api-key-form__actions">
+                    <button type="submit" class="button button-primary"><?php echo esc_html__('Зберегти ключ', 'eleads-woocommerce'); ?></button>
 
-            <?php if ((string) $settings['api_key'] !== '') : ?>
-                <p class="eleads-api-status <?php echo ! empty($settings['api_key_valid']) ? 'is-valid' : 'is-invalid'; ?>">
-                    <?php
-                    echo ! empty($settings['api_key_valid'])
-                        ? esc_html__('Ключ перевірено. Налаштування модуля відкриті.', 'eleads-woocommerce')
-                        : esc_html__('Ключ не пройшов перевірку. Налаштування модуля закриті.', 'eleads-woocommerce');
-                    ?>
-                </p>
-            <?php endif; ?>
+                    <?php if ((string) $settings['api_key'] !== '') : ?>
+                        <p class="eleads-api-status <?php echo esc_attr(! empty($settings['api_key_valid']) ? 'is-valid' : 'is-invalid'); ?>">
+                            <?php
+                            echo ! empty($settings['api_key_valid'])
+                                ? esc_html__('Ключ перевірено. Налаштування модуля відкриті.', 'eleads-woocommerce')
+                                : esc_html__('Ключ не пройшов перевірку. Налаштування модуля закриті.', 'eleads-woocommerce');
+                            ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
+            </div>
 
             <p class="description">
                 <?php

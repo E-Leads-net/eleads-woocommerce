@@ -23,7 +23,7 @@ final class Sanitizer
      */
     public function export_settings(array $input): array
     {
-        $image_size = isset($input['image_size']) ? sanitize_key((string) wp_unslash($input['image_size'])) : '200x200';
+        $image_size = isset($input['image_size']) ? sanitize_key((string) wp_unslash($input['image_size'])) : 'thumbnail';
         $short_description_source = isset($input['short_description_source'])
             ? sanitize_key((string) wp_unslash($input['short_description_source']))
             : 'short_description';
@@ -31,7 +31,7 @@ final class Sanitizer
         return [
             'sync_enabled'             => isset($input['sync_enabled']),
             'widgets_enabled'          => isset($input['widgets_enabled']),
-            'image_size'               => $this->allowed_value($image_size, ['200x200', '400x400', 'full'], '200x200'),
+            'image_size'               => $this->image_size($image_size),
             'feed_key'                 => isset($input['feed_key']) ? sanitize_text_field((string) wp_unslash($input['feed_key'])) : '',
             'store_name'               => isset($input['store_name']) ? sanitize_text_field((string) wp_unslash($input['store_name'])) : '',
             'email'                    => isset($input['email']) ? sanitize_email((string) wp_unslash($input['email'])) : '',
@@ -69,6 +69,15 @@ final class Sanitizer
         }
 
         return $limit;
+    }
+
+    private function image_size(string $value): string
+    {
+        if ($value === 'full') {
+            return 'full';
+        }
+
+        return array_key_exists($value, wp_get_registered_image_subsizes()) ? $value : 'thumbnail';
     }
 
     /**

@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: E-Leads WooCommerce 0.1.0\n"
+"Project-Id-Version: E-Leads WooCommerce 0.2.0\n"
 "Report-Msgid-Bugs-To: support@e-leads.net\n"
-"POT-Creation-Date: 2026-05-04 17:52+0300\n"
+"POT-Creation-Date: 2026-05-04 23:20+0300\n"
 "PO-Revision-Date: 2026-05-04 17:52+0300\n"
 "Last-Translator: E-Leads <support@e-leads.net>\n"
 "Language-Team: ru_RU <support@e-leads.net>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Codex\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
 #: src/Admin/Assets.php:34
 msgid "Генерація..."
@@ -30,7 +31,7 @@ msgstr "Фид готов"
 msgid "Помилка генерації"
 msgstr "Ошибка генерации"
 
-#: src/Admin/Assets.php:37 views/admin/tabs/export.php:63
+#: src/Admin/Assets.php:37 views/admin/tabs/export.php:64
 #: views/admin/tabs/seo.php:53
 msgid "Копіювати URL"
 msgstr "Копировать URL"
@@ -47,7 +48,7 @@ msgstr "У вас нет прав для генерации фидов."
 msgid "You do not have permission to save these settings."
 msgstr "У вас нет прав для сохранения этих настроек."
 
-#: src/Admin/Menu.php:19 src/Admin/Menu.php:20 views/admin/page.php:26
+#: src/Admin/Menu.php:19 src/Admin/Menu.php:20 views/admin/page.php:27
 msgid "E-Leads"
 msgstr "E-Leads"
 
@@ -57,7 +58,9 @@ msgstr "E-Leads"
 msgid ""
 "E-Leads WooCommerce requires %s to be installed and active. The module is "
 "currently disabled."
-msgstr "Для E-Leads WooCommerce требуется установленный и активный %s. Модуль сейчас отключен."
+msgstr ""
+"Для E-Leads WooCommerce требуется установленный и активный %s. Модуль сейчас "
+"отключен."
 
 #. translators: %s: permalinks settings URL.
 #: src/Admin/Notice.php:36
@@ -65,23 +68,33 @@ msgstr "Для E-Leads WooCommerce требуется установленный
 msgid ""
 "API endpoint-и E-Leads WooCommerce потребують красивих постійних посилань. "
 "Увімкніть їх у <a href=\"%s\">налаштуваннях постійних посилань</a>."
-msgstr "API endpoint-ы E-Leads WooCommerce требуют красивые постоянные ссылки. Включите их в <a href=\"%s\">настройках постоянных ссылок</a>."
+msgstr ""
+"API endpoint-ы E-Leads WooCommerce требуют красивые постоянные ссылки. "
+"Включите их в <a href=\"%s\">настройках постоянных ссылок</a>."
 
 #: src/Admin/Page.php:61
 msgid "You do not have permission to access this page."
 msgstr "У вас нет прав для доступа к этой странице."
 
-#: src/Admin/Page.php:112
+#: src/Admin/Page.php:113
 msgid "Налаштування експорту"
 msgstr "Настройки экспорта"
 
-#: src/Admin/Page.php:116
+#: src/Admin/Page.php:117
 msgid "SEO"
 msgstr "SEO"
 
-#: src/Admin/Page.php:119
+#: src/Admin/Page.php:120
 msgid "API Key"
 msgstr "API Key"
+
+#: src/Admin/Page.php:151
+msgid "Thumbnail"
+msgstr "Миниатюра"
+
+#: src/Admin/Page.php:154
+msgid "Original image"
+msgstr "Оригинальное изображение"
 
 #: src/Admin/PluginLinks.php:18
 msgid "Settings"
@@ -103,35 +116,43 @@ msgstr "Условия"
 msgid "Security"
 msgstr "Безопасность"
 
-#: src/Feed/OfferBuilder.php:379
+#: src/Feed/Endpoint.php:66
+msgid "Forbidden"
+msgstr "Запрещено"
+
+#: src/Feed/Endpoint.php:74
+msgid "Not Found"
+msgstr "Не найдено"
+
+#: src/Feed/OfferBuilder.php:382
 msgid "Опції"
 msgstr "Опции"
 
-#: src/Seo/PageRenderer.php:279
+#: src/Seo/PageRenderer.php:286
 msgid "Not found"
 msgstr "Не найдено"
 
-#: views/admin/page.php:28
+#: views/admin/page.php:29
 msgid "WooCommerce export and synchronization module"
 msgstr "Модуль экспорта и синхронизации WooCommerce"
 
-#: views/admin/page.php:36
+#: views/admin/page.php:37
 msgid "WooCommerce active"
 msgstr "WooCommerce активен"
 
-#: views/admin/page.php:44
+#: views/admin/page.php:45
 msgid "Налаштування збережено."
 msgstr "Настройки сохранены."
 
-#: views/admin/page.php:49
+#: views/admin/page.php:50
 msgid "Фід згенеровано."
 msgstr "Фид сгенерирован."
 
-#: views/admin/page.php:53
+#: views/admin/page.php:54
 msgid "Не вдалося згенерувати фід."
 msgstr "Не удалось сгенерировать фид."
 
-#: views/admin/page.php:57
+#: views/admin/page.php:58
 msgid "E-Leads tabs"
 msgstr "Вкладки E-Leads"
 
@@ -157,59 +178,64 @@ msgid ""
 "Введіть API ключ проекту E-Leads для доступу до налаштувань модуля. Ключ "
 "можна отримати в <a href=\"%s\" target=\"_blank\" rel=\"noopener "
 "noreferrer\">дашборді E-Leads</a>."
-msgstr "Введите API ключ проекта E-Leads для доступа к настройкам модуля. Ключ можно получить в <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">дашборде E-Leads</a>."
+msgstr ""
+"Введите API ключ проекта E-Leads для доступа к настройкам модуля. Ключ можно "
+"получить в <a href=\"%s\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">дашборде E-Leads</a>."
 
-#: views/admin/tabs/export.php:26
+#: views/admin/tabs/export.php:27
 #, php-format
 msgid ""
 "Введіть і збережіть дійсний API ключ E-Leads, щоб керувати налаштуваннями "
 "експорту. <a href=\"%s\">Перейти до вкладки API Key</a>."
-msgstr "Введите и сохраните действительный API ключ E-Leads, чтобы управлять настройками экспорта. <a href=\"%s\">Перейти во вкладку API Key</a>."
+msgstr ""
+"Введите и сохраните действительный API ключ E-Leads, чтобы управлять "
+"настройками экспорта. <a href=\"%s\">Перейти во вкладку API Key</a>."
 
-#: views/admin/tabs/export.php:42
+#: views/admin/tabs/export.php:43
 msgid "URL фіду"
 msgstr "URL фида"
 
-#: views/admin/tabs/export.php:60
+#: views/admin/tabs/export.php:61
 msgid "Перегенерувати фід"
 msgstr "Перегенерировать фид"
 
-#: views/admin/tabs/export.php:71
+#: views/admin/tabs/export.php:72
 msgid "Завантажити"
 msgstr "Скачать"
 
-#: views/admin/tabs/export.php:76
+#: views/admin/tabs/export.php:77
 #, php-format
 msgid "Фід готовий, пропозицій: %d"
 msgstr "Фид готов, предложений: %d"
 
-#: views/admin/tabs/export.php:77
+#: views/admin/tabs/export.php:78
 msgid "Фід ще не створено"
 msgstr "Фид еще не создан"
 
-#: views/admin/tabs/export.php:84
+#: views/admin/tabs/export.php:85
 #, php-format
 msgid "Товарів: %1$d / %2$d"
 msgstr "Товаров: %1$d / %2$d"
 
-#: views/admin/tabs/export.php:92
+#: views/admin/tabs/export.php:93
 msgid "Синхронізація"
 msgstr "Синхронизация"
 
-#: views/admin/tabs/export.php:97
+#: views/admin/tabs/export.php:98
 msgid "Увімкнути синхронізацію"
 msgstr "Включить синхронизацию"
 
-#: views/admin/tabs/export.php:102
+#: views/admin/tabs/export.php:103
 msgid "Віджет E-Leads"
 msgstr "Виджет E-Leads"
 
-#: views/admin/tabs/export.php:107
+#: views/admin/tabs/export.php:108
 msgid "Увімкнути віджет E-Leads на сайті"
 msgstr "Включить виджет E-Leads на сайте"
 
 #. translators: 1: service domain, 2: docs URL, 3: landing URL, 4: privacy policy URL, 5: terms URL, 6: cookie policy URL, 7: security URL.
-#: views/admin/tabs/export.php:115
+#: views/admin/tabs/export.php:116
 #, php-format
 msgid ""
 "Після увімкнення сайт буде завантажувати скрипт віджета E-Leads із "
@@ -223,120 +249,131 @@ msgid ""
 "href=\"%6$s\" target=\"_blank\" rel=\"noopener noreferrer\">cookie policy</"
 "a>, <a href=\"%7$s\" target=\"_blank\" rel=\"noopener noreferrer\">security</"
 "a>."
-msgstr "После включения сайт будет загружать скрипт виджета E-Leads из внешнего сервиса <code>%1$s</code>. Включение этой опции означает согласие на подключение сервиса E-Leads на публичных страницах сайта. Подробнее: <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">документация</a>, <a href=\"%3$s\" target=\"_blank\" rel=\"noopener noreferrer\">о E-Leads</a>, <a href=\"%4$s\" target=\"_blank\" rel=\"noopener noreferrer\">политика конфиденциальности</a>, <a href=\"%5$s\" target=\"_blank\" rel=\"noopener noreferrer\">условия использования</a>, <a href=\"%6$s\" target=\"_blank\" rel=\"noopener noreferrer\">cookie policy</a>, <a href=\"%7$s\" target=\"_blank\" rel=\"noopener noreferrer\">security</a>."
+msgstr ""
+"После включения сайт будет загружать скрипт виджета E-Leads из внешнего "
+"сервиса <code>%1$s</code>. Включение этой опции означает согласие на "
+"подключение сервиса E-Leads на публичных страницах сайта. Подробнее: <a "
+"href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">документация</"
+"a>, <a href=\"%3$s\" target=\"_blank\" rel=\"noopener noreferrer\">о E-"
+"Leads</a>, <a href=\"%4$s\" target=\"_blank\" rel=\"noopener "
+"noreferrer\">политика конфиденциальности</a>, <a href=\"%5$s\" "
+"target=\"_blank\" rel=\"noopener noreferrer\">условия использования</a>, <a "
+"href=\"%6$s\" target=\"_blank\" rel=\"noopener noreferrer\">cookie policy</"
+"a>, <a href=\"%7$s\" target=\"_blank\" rel=\"noopener noreferrer\">security</"
+"a>."
 
-#: views/admin/tabs/export.php:139
+#: views/admin/tabs/export.php:140
 msgid "Категорії"
 msgstr "Категории"
 
-#: views/admin/tabs/export.php:143
+#: views/admin/tabs/export.php:144 views/admin/tabs/export.php:205
+#: views/admin/tabs/export.php:251
 msgid "Позначити всі"
 msgstr "Выбрать все"
 
-#: views/admin/tabs/export.php:147
+#: views/admin/tabs/export.php:148 views/admin/tabs/export.php:209
+#: views/admin/tabs/export.php:255
 msgid "Зняти позначення"
 msgstr "Снять отметки"
 
-#: views/admin/tabs/export.php:157
+#: views/admin/tabs/export.php:158
 msgid "Категорії не знайдено"
 msgstr "Категории не найдены"
 
-#: views/admin/tabs/export.php:158
+#: views/admin/tabs/export.php:159
 msgid ""
 "Створіть категорії товарів WooCommerce, щоб вибрати їх для вивантаження."
 msgstr "Создайте категории товаров WooCommerce, чтобы выбрать их для выгрузки."
 
-#: views/admin/tabs/export.php:174
+#: views/admin/tabs/export.php:175
 msgid ""
 "Позначте категорії для вивантаження. Якщо нічого не вибрано — товари не "
 "вивантажуються."
-msgstr "Отметьте категории для выгрузки. Если ничего не выбрано, товары не выгружаются."
+msgstr ""
+"Отметьте категории для выгрузки. Если ничего не выбрано, товары не "
+"выгружаются."
 
-#: views/admin/tabs/export.php:180
+#: views/admin/tabs/export.php:181
 msgid "Атрибути для фільтрації"
 msgstr "Атрибуты для фильтрации"
 
-#: views/admin/tabs/export.php:190
+#: views/admin/tabs/export.php:191
 msgid "Увімкнути вибір атрибутів для фільтрації"
 msgstr "Включить выбор атрибутов для фильтрации"
 
-#: views/admin/tabs/export.php:197
+#: views/admin/tabs/export.php:198
 msgid "Атрибути WooCommerce ще не створені."
 msgstr "Атрибуты WooCommerce еще не созданы."
 
-#: views/admin/tabs/export.php:214
+#: views/admin/tabs/export.php:227
 msgid "Опції для фільтрації"
 msgstr "Опции для фильтрации"
 
-#: views/admin/tabs/export.php:224
+#: views/admin/tabs/export.php:237
 msgid "Увімкнути вибір опцій для фільтрації"
 msgstr "Включить выбор опций для фильтрации"
 
-#: views/admin/tabs/export.php:231
+#: views/admin/tabs/export.php:244
 msgid "Опції будуть доступні після створення атрибутів WooCommerce."
 msgstr "Опции будут доступны после создания атрибутов WooCommerce."
 
-#: views/admin/tabs/export.php:247
+#: views/admin/tabs/export.php:272
 msgid "Групування товарів"
 msgstr "Группировка товаров"
 
-#: views/admin/tabs/export.php:252
+#: views/admin/tabs/export.php:277
 msgid "Групувати варіації товару в одну пропозицію"
 msgstr "Группировать вариации товара в одно предложение"
 
-#: views/admin/tabs/export.php:257
+#: views/admin/tabs/export.php:282
 msgid "Параметри експорту"
 msgstr "Параметры экспорта"
 
-#: views/admin/tabs/export.php:260
+#: views/admin/tabs/export.php:285
 msgid "Розмір зображень"
 msgstr "Размер изображений"
 
-#: views/admin/tabs/export.php:264
-msgid "Оригінал"
-msgstr "Оригинал"
-
-#: views/admin/tabs/export.php:269
+#: views/admin/tabs/export.php:296
 msgid "Ключ доступу (необов'язково)"
 msgstr "Ключ доступа (необязательно)"
 
-#: views/admin/tabs/export.php:274
+#: views/admin/tabs/export.php:301
 msgid "Назва магазину"
 msgstr "Название магазина"
 
-#: views/admin/tabs/export.php:279
+#: views/admin/tabs/export.php:306
 msgid "Email"
 msgstr "Email"
 
-#: views/admin/tabs/export.php:284
+#: views/admin/tabs/export.php:311
 msgid "URL магазину"
 msgstr "URL магазина"
 
-#: views/admin/tabs/export.php:289
+#: views/admin/tabs/export.php:316
 msgid "Валюта"
 msgstr "Валюта"
 
-#: views/admin/tabs/export.php:294
+#: views/admin/tabs/export.php:321
 msgid "Ліміт зображень (picture)"
 msgstr "Лимит изображений (picture)"
 
-#: views/admin/tabs/export.php:299
+#: views/admin/tabs/export.php:326
 msgid "Джерело short_description"
 msgstr "Источник short_description"
 
-#: views/admin/tabs/export.php:301
+#: views/admin/tabs/export.php:328
 msgid "Короткий опис (анотація)"
 msgstr "Короткое описание (аннотация)"
 
-#: views/admin/tabs/export.php:302
+#: views/admin/tabs/export.php:329
 msgid "Meta description"
 msgstr "Meta description"
 
-#: views/admin/tabs/export.php:303
+#: views/admin/tabs/export.php:330
 msgid "Повний опис"
 msgstr "Полное описание"
 
-#: views/admin/tabs/export.php:310 views/admin/tabs/seo.php:69
+#: views/admin/tabs/export.php:337 views/admin/tabs/seo.php:69
 msgid "Застосувати"
 msgstr "Применить"
 
@@ -364,4 +401,9 @@ msgstr "Открыть"
 msgid ""
 "Після увімкнення модуль створить sitemap і відкриє сторінки /e-search/{slug} "
 "для SEO контенту з E-Leads."
-msgstr "После включения модуль создаст sitemap и откроет страницы /e-search/{slug} для SEO контента из E-Leads."
+msgstr ""
+"После включения модуль создаст sitemap и откроет страницы /e-search/{slug} "
+"для SEO контента из E-Leads."
+
+#~ msgid "Оригінал"
+#~ msgstr "Оригинал"

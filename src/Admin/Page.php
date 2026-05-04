@@ -66,12 +66,13 @@ final class Page
 
         $this->view->render('admin/page', [
             'active_tab' => $active_tab,
-            'tabs'       => $this->tabs(),
+            'tabs'       => $this->tabs($settings),
             'tab_url'    => [$this, 'tab_url'],
             'tab_view'   => $this->tab_view($active_tab),
             'settings'   => $settings,
             'categories' => $active_tab === self::TAB_EXPORT ? $this->category_tree->all() : [],
             'attributes' => $active_tab === self::TAB_EXPORT ? $this->attributes->all() : [],
+            'image_sizes' => $active_tab === self::TAB_EXPORT ? $this->image_sizes() : [],
             'feed_rows'  => $active_tab === self::TAB_EXPORT ? $this->feed_rows() : [],
             'seo_sitemap_url' => $this->seo_sitemap->url(),
             'saved'      => isset($_GET['eleads_saved']) && $_GET['eleads_saved'] === '1',
@@ -95,7 +96,7 @@ final class Page
         $default_tab = empty($settings['api_key_valid']) ? self::TAB_API_KEY : self::TAB_EXPORT;
         $tab = isset($_GET['tab']) ? sanitize_key((string) wp_unslash($_GET['tab'])) : $default_tab;
 
-        if (! array_key_exists($tab, $this->tabs())) {
+        if (! array_key_exists($tab, $this->tabs($settings))) {
             return $default_tab;
         }
 
@@ -105,9 +106,16 @@ final class Page
     /**
      * @return array<string, string>
      */
-    private function tabs(): array
+    private function tabs(?array $settings = null): array
     {
-        $settings = $this->settings->all();
+        $settings = $settings ?? $this->settings->all();
+
+        if (empty($settings['api_key_valid'])) {
+            return [
+                self::TAB_API_KEY => __('API Key', 'eleads-woocommerce'),
+            ];
+        }
+
         $tabs = [
             self::TAB_EXPORT  => __('Налаштування експорту', 'eleads-woocommerce'),
         ];
@@ -128,6 +136,31 @@ final class Page
             self::TAB_API_KEY => 'admin/tabs/api-key',
             default => 'admin/tabs/export',
         };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function image_sizes(): array
+    {
+        $items = [];
+        foreach (wp_get_registered_image_subsizes() as $name => $size) {
+            $width = (int) ($size['width'] ?? 0);
+            $height = (int) ($size['height'] ?? 0);
+            $label = $width > 0 && $height > 0
+                ? sprintf('%s (%dx%d)', $name, $width, $height)
+                : (string) $name;
+
+            $items[(string) $name] = $label;
+        }
+
+        if ($items === []) {
+            $items['thumbnail'] = __('Thumbnail', 'eleads-woocommerce');
+        }
+
+        $items['full'] = __('Original image', 'eleads-woocommerce');
+
+        return $items;
     }
 
     /**

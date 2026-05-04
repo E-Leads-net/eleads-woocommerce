@@ -6,6 +6,7 @@
  * @var array<int, array<string, mixed>> $categories
  * @var array<int, array<string, string>> $attributes
  * @var array<int, array<string, mixed>> $feed_rows
+ * @var array<string, string> $image_sizes
  */
 
 if (! defined('ABSPATH')) {
@@ -64,13 +65,13 @@ if (! defined('ABSPATH')) {
                     </button>
                     <a
                         href="<?php echo esc_url((string) $feed_row['url']); ?>"
-                        class="button button-secondary <?php echo $is_ready ? '' : 'is-disabled'; ?>"
-                        <?php echo $is_ready ? '' : 'aria-disabled="true" tabindex="-1"'; ?>
+                        class="button button-secondary <?php echo esc_attr($is_ready ? '' : 'is-disabled'); ?>"
+                        <?php echo $is_ready ? '' : 'aria-disabled="true" tabindex="-1"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         target="_blank"
                     >
                         <?php echo esc_html__('Завантажити', 'eleads-woocommerce'); ?>
                     </a>
-                    <span class="eleads-status <?php echo $is_ready ? 'eleads-status--ready' : 'eleads-status--muted'; ?>">
+                    <span class="eleads-status <?php echo esc_attr($is_ready ? 'eleads-status--ready' : 'eleads-status--muted'); ?>">
                         <?php
                         echo $is_ready
                             ? esc_html(sprintf(__('Фід готовий, пропозицій: %d', 'eleads-woocommerce'), (int) ($status['offers'] ?? 0)))
@@ -178,20 +179,38 @@ if (! defined('ABSPATH')) {
     <section class="eleads-section" aria-labelledby="eleads-attribute-filters-title">
         <div class="eleads-filter-header">
             <h2 id="eleads-attribute-filters-title"><?php echo esc_html__('Атрибути для фільтрації', 'eleads-woocommerce'); ?></h2>
-            <label class="eleads-toggle">
-                <input
-                    type="checkbox"
-                    name="attribute_filters_enabled"
-                    value="1"
-                    data-eleads-filter-toggle="attribute-filters"
-                    <?php checked((bool) $settings['attribute_filters_enabled']); ?>
-                >
-                <span class="eleads-toggle__control" aria-hidden="true"></span>
-                <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір атрибутів для фільтрації', 'eleads-woocommerce'); ?></span>
-            </label>
+            <div class="eleads-filter-header__controls">
+                <?php if ($attributes !== []) : ?>
+                    <div class="eleads-filter-actions <?php echo esc_attr(empty($settings['attribute_filters_enabled']) ? 'is-hidden' : ''); ?>" data-eleads-filter-actions="attribute-filters">
+                        <div class="eleads-inline-actions">
+                            <button type="button" class="eleads-link-button" data-eleads-filter-action="select" data-eleads-filter-target="attribute-filters">
+                                <?php echo esc_html__('Позначити всі', 'eleads-woocommerce'); ?>
+                            </button>
+                            <span aria-hidden="true">|</span>
+                            <button type="button" class="eleads-link-button" data-eleads-filter-action="clear" data-eleads-filter-target="attribute-filters">
+                                <?php echo esc_html__('Зняти позначення', 'eleads-woocommerce'); ?>
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <label class="eleads-toggle">
+                    <input
+                        type="checkbox"
+                        name="attribute_filters_enabled"
+                        value="1"
+                        data-eleads-filter-toggle="attribute-filters"
+                        <?php checked((bool) $settings['attribute_filters_enabled']); ?>
+                    >
+                    <span class="eleads-toggle__control" aria-hidden="true"></span>
+                    <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір атрибутів для фільтрації', 'eleads-woocommerce'); ?></span>
+                </label>
+            </div>
         </div>
 
-        <div class="eleads-filter-panel eleads-card" data-eleads-filter-panel="attribute-filters">
+        <div
+            class="eleads-filter-panel eleads-card <?php echo esc_attr(empty($settings['attribute_filters_enabled']) ? 'is-hidden' : ''); ?>"
+            data-eleads-filter-panel="attribute-filters"
+        >
             <?php if ($attributes === []) : ?>
                 <p class="eleads-empty-text">
                     <?php echo esc_html__('Атрибути WooCommerce ще не створені.', 'eleads-woocommerce'); ?>
@@ -212,20 +231,38 @@ if (! defined('ABSPATH')) {
     <section class="eleads-section" aria-labelledby="eleads-option-filters-title">
         <div class="eleads-filter-header">
             <h2 id="eleads-option-filters-title"><?php echo esc_html__('Опції для фільтрації', 'eleads-woocommerce'); ?></h2>
-            <label class="eleads-toggle">
-                <input
-                    type="checkbox"
-                    name="option_filters_enabled"
-                    value="1"
-                    data-eleads-filter-toggle="option-filters"
-                    <?php checked((bool) $settings['option_filters_enabled']); ?>
-                >
-                <span class="eleads-toggle__control" aria-hidden="true"></span>
-                <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір опцій для фільтрації', 'eleads-woocommerce'); ?></span>
-            </label>
+            <div class="eleads-filter-header__controls">
+                <?php if ($attributes !== []) : ?>
+                    <div class="eleads-filter-actions <?php echo esc_attr(empty($settings['option_filters_enabled']) ? 'is-hidden' : ''); ?>" data-eleads-filter-actions="option-filters">
+                        <div class="eleads-inline-actions">
+                            <button type="button" class="eleads-link-button" data-eleads-filter-action="select" data-eleads-filter-target="option-filters">
+                                <?php echo esc_html__('Позначити всі', 'eleads-woocommerce'); ?>
+                            </button>
+                            <span aria-hidden="true">|</span>
+                            <button type="button" class="eleads-link-button" data-eleads-filter-action="clear" data-eleads-filter-target="option-filters">
+                                <?php echo esc_html__('Зняти позначення', 'eleads-woocommerce'); ?>
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <label class="eleads-toggle">
+                    <input
+                        type="checkbox"
+                        name="option_filters_enabled"
+                        value="1"
+                        data-eleads-filter-toggle="option-filters"
+                        <?php checked((bool) $settings['option_filters_enabled']); ?>
+                    >
+                    <span class="eleads-toggle__control" aria-hidden="true"></span>
+                    <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір опцій для фільтрації', 'eleads-woocommerce'); ?></span>
+                </label>
+            </div>
         </div>
 
-        <div class="eleads-filter-panel eleads-card" data-eleads-filter-panel="option-filters">
+        <div
+            class="eleads-filter-panel eleads-card <?php echo esc_attr(empty($settings['option_filters_enabled']) ? 'is-hidden' : ''); ?>"
+            data-eleads-filter-panel="option-filters"
+        >
             <?php if ($attributes === []) : ?>
                 <p class="eleads-empty-text">
                     <?php echo esc_html__('Опції будуть доступні після створення атрибутів WooCommerce.', 'eleads-woocommerce'); ?>
@@ -259,9 +296,11 @@ if (! defined('ABSPATH')) {
         <label class="eleads-field">
             <span><?php echo esc_html__('Розмір зображень', 'eleads-woocommerce'); ?></span>
             <select name="image_size">
-                <option value="200x200" <?php selected($settings['image_size'], '200x200'); ?>>200x200</option>
-                <option value="400x400" <?php selected($settings['image_size'], '400x400'); ?>>400x400</option>
-                <option value="full" <?php selected($settings['image_size'], 'full'); ?>><?php echo esc_html__('Оригінал', 'eleads-woocommerce'); ?></option>
+                <?php foreach ($image_sizes as $image_size => $label) : ?>
+                    <option value="<?php echo esc_attr($image_size); ?>" <?php selected($settings['image_size'], $image_size); ?>>
+                        <?php echo esc_html($label); ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
         </label>
 

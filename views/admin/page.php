@@ -10,6 +10,7 @@
  * @var array<int, array<string, mixed>> $categories
  * @var array<int, array<string, string>> $attributes
  * @var array<int, array<string, mixed>> $feed_rows
+ * @var array<string, string> $image_sizes
  * @var string $seo_sitemap_url
  * @var bool $saved
  * @var string $generated
@@ -58,7 +59,7 @@ if (! defined('ABSPATH')) {
             <?php foreach ($tabs as $tab => $label) : ?>
                 <a
                     href="<?php echo esc_url($tab_url($tab)); ?>"
-                    class="eleads-admin__tab <?php echo $active_tab === $tab ? 'is-active' : ''; ?>"
+                    class="eleads-admin__tab <?php echo esc_attr($active_tab === $tab ? 'is-active' : ''); ?>"
                 >
                     <?php echo esc_html($label); ?>
                 </a>
@@ -72,6 +73,7 @@ if (! defined('ABSPATH')) {
                 'settings'   => $settings,
                 'categories' => $categories,
                 'attributes' => $attributes,
+                'image_sizes' => $image_sizes,
                 'feed_rows'  => $feed_rows,
                 'seo_sitemap_url' => $seo_sitemap_url,
             ]);
