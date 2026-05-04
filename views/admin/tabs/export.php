@@ -98,6 +98,42 @@ if (! defined('ABSPATH')) {
         </label>
     </section>
 
+    <section class="eleads-section" aria-labelledby="eleads-widgets-title">
+        <h2 id="eleads-widgets-title"><?php echo esc_html__('Віджет E-Leads', 'eleads-woocommerce'); ?></h2>
+
+        <label class="eleads-toggle">
+            <input type="checkbox" name="widgets_enabled" value="1" <?php checked((bool) $settings['widgets_enabled']); ?>>
+            <span class="eleads-toggle__control" aria-hidden="true"></span>
+            <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути віджет E-Leads на сайті', 'eleads-woocommerce'); ?></span>
+        </label>
+
+        <p class="description">
+            <?php
+            echo wp_kses(
+                sprintf(
+                    /* translators: 1: service domain, 2: docs URL, 3: landing URL, 4: privacy policy URL, 5: terms URL, 6: cookie policy URL, 7: security URL. */
+                    __('Після увімкнення сайт буде завантажувати скрипт віджета E-Leads із зовнішнього сервісу <code>%1$s</code>. Увімкнення цієї опції означає згоду на підключення сервісу E-Leads на публічних сторінках сайту. Докладніше: <a href="%2$s" target="_blank" rel="noopener noreferrer">документація</a>, <a href="%3$s" target="_blank" rel="noopener noreferrer">про E-Leads</a>, <a href="%4$s" target="_blank" rel="noopener noreferrer">політика конфіденційності</a>, <a href="%5$s" target="_blank" rel="noopener noreferrer">умови використання</a>, <a href="%6$s" target="_blank" rel="noopener noreferrer">cookie policy</a>, <a href="%7$s" target="_blank" rel="noopener noreferrer">security</a>.', 'eleads-woocommerce'),
+                    'api.e-leads.net',
+                    esc_url('https://e-leads.net/docs/'),
+                    esc_url('https://e-leads.net/'),
+                    esc_url('https://e-leads.net/privacy-policy/'),
+                    esc_url('https://e-leads.net/terms-of-service/'),
+                    esc_url('https://e-leads.net/cookie-policy/'),
+                    esc_url('https://e-leads.net/security/')
+                ),
+                [
+                    'a' => [
+                        'href'   => [],
+                        'target' => [],
+                        'rel'    => [],
+                    ],
+                    'code' => [],
+                ]
+            );
+            ?>
+        </p>
+    </section>
+
     <section class="eleads-section" aria-labelledby="eleads-categories-title">
         <div class="eleads-section__heading">
             <h2 id="eleads-categories-title"><?php echo esc_html__('Категорії', 'eleads-woocommerce'); ?></h2>

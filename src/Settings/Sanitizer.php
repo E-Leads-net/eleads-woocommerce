@@ -30,6 +30,7 @@ final class Sanitizer
 
         return [
             'sync_enabled'             => isset($input['sync_enabled']),
+            'widgets_enabled'          => isset($input['widgets_enabled']),
             'image_size'               => $this->allowed_value($image_size, ['200x200', '400x400', 'full'], '200x200'),
             'feed_key'                 => isset($input['feed_key']) ? sanitize_text_field((string) wp_unslash($input['feed_key'])) : '',
             'store_name'               => isset($input['store_name']) ? sanitize_text_field((string) wp_unslash($input['store_name'])) : '',

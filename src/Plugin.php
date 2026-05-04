@@ -35,6 +35,7 @@ use Eleads\WooCommerce\Sync\Hooks as SyncHooks;
 use Eleads\WooCommerce\Sync\LanguageResolver as SyncLanguageResolver;
 use Eleads\WooCommerce\Sync\PayloadBuilder as SyncPayloadBuilder;
 use Eleads\WooCommerce\Sync\Service as SyncService;
+use Eleads\WooCommerce\Widgets\Loader as WidgetsLoader;
 
 final class Plugin
 {
@@ -116,6 +117,7 @@ final class Plugin
         add_action('template_redirect', [$endpoint, 'serve']);
         add_action('template_redirect', [$api_endpoint, 'serve']);
         $sync_hooks->register();
+        (new WidgetsLoader($settings))->register();
 
         if (is_admin()) {
             $page         = new Page(new View(), $settings, new ProductCategoryTree(), new ProductAttributes(), $language, $statuses, $endpoint);
@@ -135,6 +137,18 @@ final class Plugin
             add_filter(
                 'plugin_action_links_' . plugin_basename(ELEADS_WOOCOMMERCE_FILE),
                 [$plugin_links, 'add_settings_link']
+            );
+            add_filter(
+                'plugin_row_meta',
+                static function (array $links, string $file) use ($plugin_links): array {
+                    if ($file !== plugin_basename(ELEADS_WOOCOMMERCE_FILE)) {
+                        return $links;
+                    }
+
+                    return $plugin_links->add_meta_links($links);
+                },
+                10,
+                2
             );
         }
     }
