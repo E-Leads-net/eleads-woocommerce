@@ -7,7 +7,7 @@ namespace Eleads\WooCommerce\Api;
 final class Routes
 {
     private const DEFAULT_DASHBOARD_BASE = 'https://dashboard.e-leads.net';
-    private const DEFAULT_WIDGETS_BASE = 'https://dashboard.e-leads.net';
+    private const DEFAULT_WIDGETS_BASE = 'https://api.e-leads.net';
 
     public static function dashboard_url(): string
     {
@@ -22,6 +22,11 @@ final class Routes
     public static function ecommerce_items_url(): string
     {
         return self::dashboard_base() . '/api/ecommerce/items';
+    }
+
+    public static function ecommerce_item_url(string $external_id): string
+    {
+        return self::ecommerce_items_url() . '/' . rawurlencode($external_id);
     }
 
     public static function seo_slugs_url(): string

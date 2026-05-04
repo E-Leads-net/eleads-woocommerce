@@ -30,6 +30,11 @@ use Eleads\WooCommerce\Feed\ProductQuery;
 use Eleads\WooCommerce\Feed\StatusRepository;
 use Eleads\WooCommerce\Settings\Sanitizer;
 use Eleads\WooCommerce\Settings\SettingsRepository;
+use Eleads\WooCommerce\Sync\ApiClient;
+use Eleads\WooCommerce\Sync\Hooks as SyncHooks;
+use Eleads\WooCommerce\Sync\LanguageResolver as SyncLanguageResolver;
+use Eleads\WooCommerce\Sync\PayloadBuilder as SyncPayloadBuilder;
+use Eleads\WooCommerce\Sync\Service as SyncService;
 
 final class Plugin
 {
@@ -96,6 +101,13 @@ final class Plugin
             $endpoint,
             new SeoSitemap()
         );
+        $sync_language = new SyncLanguageResolver($language);
+        $sync_hooks = new SyncHooks(new SyncService(
+            $settings,
+            new SyncPayloadBuilder($settings, $sync_language),
+            new ApiClient(),
+            $sync_language
+        ));
 
         add_action('init', [Endpoint::class, 'register_rewrite_rules']);
         add_action('init', [PublicEndpoint::class, 'register_rewrite_rules']);
@@ -103,6 +115,7 @@ final class Plugin
         add_filter('query_vars', [$api_endpoint, 'query_vars']);
         add_action('template_redirect', [$endpoint, 'serve']);
         add_action('template_redirect', [$api_endpoint, 'serve']);
+        $sync_hooks->register();
 
         if (is_admin()) {
             $page         = new Page(new View(), $settings, new ProductCategoryTree(), new ProductAttributes(), $language, $statuses, $endpoint);
