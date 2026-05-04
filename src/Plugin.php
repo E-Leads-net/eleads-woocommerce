@@ -30,6 +30,8 @@ use Eleads\WooCommerce\Feed\ProductQuery;
 use Eleads\WooCommerce\Feed\StatusRepository;
 use Eleads\WooCommerce\Settings\Sanitizer;
 use Eleads\WooCommerce\Settings\SettingsRepository;
+use Eleads\WooCommerce\Seo\PageApiClient as SeoPageApiClient;
+use Eleads\WooCommerce\Seo\PageRenderer as SeoPageRenderer;
 use Eleads\WooCommerce\Sync\ApiClient;
 use Eleads\WooCommerce\Sync\Hooks as SyncHooks;
 use Eleads\WooCommerce\Sync\LanguageResolver as SyncLanguageResolver;
@@ -84,6 +86,8 @@ final class Plugin
         $paths = new PathResolver();
         $statuses = new StatusRepository($paths);
         $endpoint = new Endpoint($settings, $language, $paths);
+        $seo_sitemap = new SeoSitemap();
+        $seo_renderer = new SeoPageRenderer($settings, $language, $seo_sitemap, new SeoPageApiClient());
         $generator = new Generator(
             $settings,
             $language,
@@ -94,13 +98,13 @@ final class Plugin
             $statuses
         );
         $api_endpoint = new PublicEndpoint(
-            $settings,
             new Auth($settings),
             $language,
             $generator,
             $statuses,
             $endpoint,
-            new SeoSitemap()
+            $seo_sitemap,
+            $seo_renderer
         );
         $sync_language = new SyncLanguageResolver($language);
         $sync_hooks = new SyncHooks(new SyncService(
@@ -120,11 +124,11 @@ final class Plugin
         (new WidgetsLoader($settings))->register();
 
         if (is_admin()) {
-            $page         = new Page(new View(), $settings, new ProductCategoryTree(), new ProductAttributes(), $language, $statuses, $endpoint);
+            $page         = new Page(new View(), $settings, new ProductCategoryTree(), new ProductAttributes(), $language, $statuses, $endpoint, $seo_sitemap);
             $menu         = new Menu($page);
             $assets       = new Assets();
             $plugin_links = new PluginLinks();
-            $form_handler = new FormHandler($settings, new Sanitizer(), new DashboardTokenValidator());
+            $form_handler = new FormHandler($settings, new Sanitizer(), new DashboardTokenValidator(), $seo_sitemap);
             $feed_actions = new FeedActionHandler($generator, $language);
 
             add_action('admin_init', [$form_handler, 'handle']);

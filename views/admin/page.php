@@ -10,6 +10,7 @@
  * @var array<int, array<string, mixed>> $categories
  * @var array<int, array<string, string>> $attributes
  * @var array<int, array<string, mixed>> $feed_rows
+ * @var string $seo_sitemap_url
  * @var bool $saved
  * @var string $generated
  */
@@ -72,6 +73,7 @@ if (! defined('ABSPATH')) {
                 'categories' => $categories,
                 'attributes' => $attributes,
                 'feed_rows'  => $feed_rows,
+                'seo_sitemap_url' => $seo_sitemap_url,
             ]);
             ?>
         </div>

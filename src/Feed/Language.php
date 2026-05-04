@@ -31,10 +31,29 @@ final class Language
 
     public function normalize(string $language): string
     {
+        if (trim($language) === '') {
+            return $this->default();
+        }
+
         $language = $this->normalize_code($language);
 
         if (array_key_exists($language, $this->supported())) {
             return $language;
+        }
+
+        $first_language = array_key_first($this->supported());
+
+        return is_string($first_language) ? $first_language : 'en';
+    }
+
+    public function default(): string
+    {
+        if (function_exists('pll_default_language')) {
+            return $this->normalize_code((string) pll_default_language('slug'));
+        }
+
+        if (has_filter('wpml_default_language')) {
+            return $this->normalize_code((string) apply_filters('wpml_default_language', null));
         }
 
         $first_language = array_key_first($this->supported());

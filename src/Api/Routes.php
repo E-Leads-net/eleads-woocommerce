@@ -39,6 +39,11 @@ final class Routes
         return self::dashboard_base() . '/api/seo/pages';
     }
 
+    public static function seo_page_url(string $slug, string $language): string
+    {
+        return add_query_arg('lang', $language, self::seo_pages_url() . '/' . rawurlencode($slug));
+    }
+
     public static function widgets_loader_tag_url(): string
     {
         return self::widgets_base() . '/v1/widgets-loader-tag';

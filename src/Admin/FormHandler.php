@@ -7,6 +7,7 @@ namespace Eleads\WooCommerce\Admin;
 use Eleads\WooCommerce\Settings\Sanitizer;
 use Eleads\WooCommerce\Settings\SettingsRepository;
 use Eleads\WooCommerce\Api\DashboardTokenValidator;
+use Eleads\WooCommerce\Api\SeoSitemap;
 
 final class FormHandler
 {
@@ -16,11 +17,19 @@ final class FormHandler
 
     private DashboardTokenValidator $token_validator;
 
-    public function __construct(SettingsRepository $settings, Sanitizer $sanitizer, DashboardTokenValidator $token_validator)
+    private SeoSitemap $seo_sitemap;
+
+    public function __construct(
+        SettingsRepository $settings,
+        Sanitizer $sanitizer,
+        DashboardTokenValidator $token_validator,
+        SeoSitemap $seo_sitemap
+    )
     {
         $this->settings        = $settings;
         $this->sanitizer       = $sanitizer;
         $this->token_validator = $token_validator;
+        $this->seo_sitemap     = $seo_sitemap;
     }
 
     public function handle(): void
@@ -38,6 +47,7 @@ final class FormHandler
         match ($action) {
             'save_api_key' => $this->save_api_key(),
             'save_export_settings' => $this->save_export_settings(),
+            'save_seo_settings' => $this->save_seo_settings(),
             default => null,
         };
     }
@@ -53,6 +63,7 @@ final class FormHandler
         $settings['seo_pages_allowed'] = $status['seo_status'];
         if (! $status['seo_status']) {
             $settings['seo_pages_enabled'] = false;
+            $this->seo_sitemap->remove();
         }
 
         $this->settings->update($settings);
@@ -65,6 +76,26 @@ final class FormHandler
 
         $this->settings->update($this->sanitizer->export_settings($_POST));
         $this->redirect('export');
+    }
+
+    private function save_seo_settings(): void
+    {
+        check_admin_referer('eleads_save_seo_settings', 'eleads_seo_nonce');
+
+        $current = $this->settings->all();
+        $enabled = ! empty($current['api_key_valid'])
+            && ! empty($current['seo_pages_allowed'])
+            && isset($_POST['seo_pages_enabled']);
+
+        $this->settings->update(['seo_pages_enabled' => $enabled]);
+
+        if ($enabled) {
+            $this->seo_sitemap->create_from_dashboard((string) $current['api_key']);
+        } else {
+            $this->seo_sitemap->remove();
+        }
+
+        $this->redirect('seo');
     }
 
     private function is_settings_page_post(): bool

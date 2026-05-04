@@ -8,12 +8,10 @@ use Eleads\WooCommerce\Feed\Endpoint;
 use Eleads\WooCommerce\Feed\Generator;
 use Eleads\WooCommerce\Feed\Language;
 use Eleads\WooCommerce\Feed\StatusRepository;
-use Eleads\WooCommerce\Settings\SettingsRepository;
+use Eleads\WooCommerce\Seo\PageRenderer;
 
 final class PublicEndpoint
 {
-    private SettingsRepository $settings;
-
     private Auth $auth;
 
     private Language $language;
@@ -26,22 +24,24 @@ final class PublicEndpoint
 
     private SeoSitemap $sitemap;
 
+    private PageRenderer $seo_renderer;
+
     public function __construct(
-        SettingsRepository $settings,
         Auth $auth,
         Language $language,
         Generator $generator,
         StatusRepository $statuses,
         Endpoint $feed_endpoint,
-        SeoSitemap $sitemap
+        SeoSitemap $sitemap,
+        PageRenderer $seo_renderer
     ) {
-        $this->settings      = $settings;
         $this->auth          = $auth;
         $this->language      = $language;
         $this->generator     = $generator;
         $this->statuses      = $statuses;
         $this->feed_endpoint = $feed_endpoint;
         $this->sitemap       = $sitemap;
+        $this->seo_renderer  = $seo_renderer;
     }
 
     public static function register_rewrite_rules(): void
@@ -51,6 +51,7 @@ final class PublicEndpoint
         add_rewrite_rule('^eleads-yml/api/feeds/?$', 'index.php?eleads_api=feeds', 'top');
         add_rewrite_rule('^e-search/api/languages/?$', 'index.php?eleads_api=languages', 'top');
         add_rewrite_rule('^e-search/api/sitemap-sync/?$', 'index.php?eleads_api=sitemap-sync', 'top');
+        add_rewrite_rule('^([a-z]{2})/e-search/([0-9A-Za-z\-_]+)/?$', 'index.php?eleads_seo_lang=$matches[1]&eleads_seo_slug=$matches[2]', 'top');
         add_rewrite_rule('^e-search/([0-9A-Za-z\-_]+)/?$', 'index.php?eleads_seo_slug=$matches[1]', 'top');
     }
 
@@ -62,6 +63,7 @@ final class PublicEndpoint
     {
         $vars[] = 'eleads_api';
         $vars[] = 'eleads_seo_slug';
+        $vars[] = 'eleads_seo_lang';
 
         return $vars;
     }
@@ -75,7 +77,7 @@ final class PublicEndpoint
 
         $slug = (string) get_query_var('eleads_seo_slug');
         if ($slug !== '') {
-            $this->serve_seo_page($slug);
+            $this->serve_seo_page($slug, (string) get_query_var('eleads_seo_lang'));
         }
 
         $path = trim((string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH), '/');
@@ -91,8 +93,12 @@ final class PublicEndpoint
             $this->serve_api($path_map[$path]);
         }
 
+        if (preg_match('#^([a-z]{2})/e-search/([0-9A-Za-z\-_]+)$#', $path, $matches)) {
+            $this->serve_seo_page((string) $matches[2], (string) $matches[1]);
+        }
+
         if (preg_match('#^e-search/([0-9A-Za-z\-_]+)$#', $path, $matches)) {
-            $this->serve_seo_page((string) $matches[1]);
+            $this->serve_seo_page((string) $matches[1], '');
         }
     }
 
@@ -183,17 +189,9 @@ final class PublicEndpoint
         $this->json(['error' => 'not_found'], 404);
     }
 
-    private function serve_seo_page(string $slug): void
+    private function serve_seo_page(string $slug, string $language): void
     {
-        if (! (bool) $this->settings->get('seo_pages_enabled')) {
-            status_header(404);
-            return;
-        }
-
-        status_header(501);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo 'SEO pages are not implemented for WordPress yet.';
-        exit;
+        $this->seo_renderer->serve($slug, $language);
     }
 
     private function require_method(string $actual, string $expected): void

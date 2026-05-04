@@ -10,10 +10,12 @@ use Eleads\WooCommerce\Settings\SettingsRepository;
 use Eleads\WooCommerce\Feed\Endpoint;
 use Eleads\WooCommerce\Feed\Language;
 use Eleads\WooCommerce\Feed\StatusRepository;
+use Eleads\WooCommerce\Api\SeoSitemap;
 
 final class Page
 {
     private const TAB_EXPORT = 'export';
+    private const TAB_SEO = 'seo';
     private const TAB_API_KEY = 'api-key';
 
     private View $view;
@@ -30,6 +32,8 @@ final class Page
 
     private Endpoint $feed_endpoint;
 
+    private SeoSitemap $seo_sitemap;
+
     public function __construct(
         View $view,
         SettingsRepository $settings,
@@ -37,7 +41,8 @@ final class Page
         ProductAttributes $attributes,
         Language $language,
         StatusRepository $feed_statuses,
-        Endpoint $feed_endpoint
+        Endpoint $feed_endpoint,
+        SeoSitemap $seo_sitemap
     )
     {
         $this->view          = $view;
@@ -47,6 +52,7 @@ final class Page
         $this->language      = $language;
         $this->feed_statuses = $feed_statuses;
         $this->feed_endpoint = $feed_endpoint;
+        $this->seo_sitemap   = $seo_sitemap;
     }
 
     public function render(): void
@@ -55,17 +61,19 @@ final class Page
             wp_die(esc_html__('You do not have permission to access this page.', 'eleads-woocommerce'));
         }
 
-        $active_tab = $this->get_active_tab();
+        $settings = $this->settings->all();
+        $active_tab = $this->get_active_tab($settings);
 
         $this->view->render('admin/page', [
             'active_tab' => $active_tab,
             'tabs'       => $this->tabs(),
             'tab_url'    => [$this, 'tab_url'],
             'tab_view'   => $this->tab_view($active_tab),
-            'settings'   => $this->settings->all(),
+            'settings'   => $settings,
             'categories' => $active_tab === self::TAB_EXPORT ? $this->category_tree->all() : [],
             'attributes' => $active_tab === self::TAB_EXPORT ? $this->attributes->all() : [],
             'feed_rows'  => $active_tab === self::TAB_EXPORT ? $this->feed_rows() : [],
+            'seo_sitemap_url' => $this->seo_sitemap->url(),
             'saved'      => isset($_GET['eleads_saved']) && $_GET['eleads_saved'] === '1',
             'generated'  => isset($_GET['eleads_generated']) ? sanitize_key((string) wp_unslash($_GET['eleads_generated'])) : '',
         ]);
@@ -82,9 +90,8 @@ final class Page
         );
     }
 
-    private function get_active_tab(): string
+    private function get_active_tab(array $settings): string
     {
-        $settings = $this->settings->all();
         $default_tab = empty($settings['api_key_valid']) ? self::TAB_API_KEY : self::TAB_EXPORT;
         $tab = isset($_GET['tab']) ? sanitize_key((string) wp_unslash($_GET['tab'])) : $default_tab;
 
@@ -100,15 +107,24 @@ final class Page
      */
     private function tabs(): array
     {
-        return [
+        $settings = $this->settings->all();
+        $tabs = [
             self::TAB_EXPORT  => __('Налаштування експорту', 'eleads-woocommerce'),
-            self::TAB_API_KEY => __('API Key', 'eleads-woocommerce'),
         ];
+
+        if (! empty($settings['seo_pages_allowed'])) {
+            $tabs[self::TAB_SEO] = __('SEO', 'eleads-woocommerce');
+        }
+
+        $tabs[self::TAB_API_KEY] = __('API Key', 'eleads-woocommerce');
+
+        return $tabs;
     }
 
     private function tab_view(string $tab): string
     {
         return match ($tab) {
+            self::TAB_SEO => 'admin/tabs/seo',
             self::TAB_API_KEY => 'admin/tabs/api-key',
             default => 'admin/tabs/export',
         };
