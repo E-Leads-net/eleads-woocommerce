@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class Autoloader
 {
     private const PREFIX = 'Eleads\\WooCommerce\\';

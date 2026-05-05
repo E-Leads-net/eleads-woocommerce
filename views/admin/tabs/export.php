@@ -12,9 +12,11 @@
 if (! defined('ABSPATH')) {
     exit;
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are scoped to this view file.
 ?>
 
-<form class="eleads-form" method="post" action="<?php echo esc_url(admin_url('admin.php?page=eleads-woocommerce&tab=export')); ?>">
+<form class="eleads-form" method="post" action="<?php echo esc_url(admin_url('admin.php?page=eleads-for-woocommerce&tab=export')); ?>">
     <?php wp_nonce_field('eleads_save_export_settings', 'eleads_export_nonce'); ?>
     <input type="hidden" name="eleads_action" value="save_export_settings">
 
@@ -24,14 +26,15 @@ if (! defined('ABSPATH')) {
                 <?php
                 printf(
                     wp_kses(
-                        __('Введіть і збережіть дійсний API ключ E-Leads, щоб керувати налаштуваннями експорту. <a href="%s">Перейти до вкладки API Key</a>.', 'eleads-woocommerce'),
+                        /* translators: %s: URL to the API Key settings tab. */
+                        __('Введіть і збережіть дійсний API ключ E-Leads, щоб керувати налаштуваннями експорту. <a href="%s">Перейти до вкладки API Key</a>.', 'eleads-for-woocommerce'),
                         [
                             'a' => [
                                 'href' => [],
                             ],
                         ]
                     ),
-                    esc_url(admin_url('admin.php?page=eleads-woocommerce&tab=api-key'))
+                    esc_url(admin_url('admin.php?page=eleads-for-woocommerce&tab=api-key'))
                 );
                 ?>
             </p>
@@ -40,49 +43,60 @@ if (! defined('ABSPATH')) {
 
     <fieldset <?php disabled(empty($settings['api_key_valid'])); ?>>
     <section class="eleads-section" aria-labelledby="eleads-feed-url-title">
-        <h2 id="eleads-feed-url-title"><?php echo esc_html__('URL фіду', 'eleads-woocommerce'); ?></h2>
+        <h2 id="eleads-feed-url-title"><?php echo esc_html__('URL фіду', 'eleads-for-woocommerce'); ?></h2>
 
         <div class="eleads-feed-list eleads-card">
-            <?php foreach ($feed_rows as $feed_row) : ?>
+            <?php foreach ($feed_rows as $eleads_feed_row) : ?>
                 <?php
-                $status = is_array($feed_row['status']) ? $feed_row['status'] : [];
-                $is_ready = ($status['status'] ?? '') === 'ready';
-                $total = (int) ($status['total'] ?? 0);
-                $processed = (int) ($status['processed'] ?? 0);
-                $progress = $total > 0 ? min(100, (int) floor(($processed / $total) * 100)) : ($is_ready ? 100 : 0);
+                $eleads_status = is_array($eleads_feed_row['status']) ? $eleads_feed_row['status'] : [];
+                $eleads_is_ready = ($eleads_status['status'] ?? '') === 'ready';
+                $eleads_total = (int) ($eleads_status['total'] ?? 0);
+                $eleads_processed = (int) ($eleads_status['processed'] ?? 0);
+                $eleads_progress = $eleads_total > 0 ? min(100, (int) floor(($eleads_processed / $eleads_total) * 100)) : ($eleads_is_ready ? 100 : 0);
+                $eleads_ready_message = sprintf(
+                    /* translators: %d: Number of generated feed offers. */
+                    __('Фід готовий, пропозицій: %d', 'eleads-for-woocommerce'),
+                    (int) ($eleads_status['offers'] ?? 0)
+                );
+                $eleads_progress_message = sprintf(
+                    /* translators: 1: Number of processed products, 2: Total products count. */
+                    __('Товарів: %1$d / %2$d', 'eleads-for-woocommerce'),
+                    $eleads_processed,
+                    $eleads_total
+                );
                 ?>
-                <div class="eleads-feed-row" data-eleads-feed-row="<?php echo esc_attr((string) $feed_row['language']); ?>">
-                    <div class="eleads-feed-row__language"><?php echo esc_html((string) $feed_row['label']); ?></div>
+                <div class="eleads-feed-row" data-eleads-feed-row="<?php echo esc_attr((string) $eleads_feed_row['language']); ?>">
+                    <div class="eleads-feed-row__language"><?php echo esc_html((string) $eleads_feed_row['label']); ?></div>
                     <button
                         type="button"
                         class="button button-primary"
-                        data-eleads-generate-feed="<?php echo esc_attr((string) $feed_row['language']); ?>"
+                        data-eleads-generate-feed="<?php echo esc_attr((string) $eleads_feed_row['language']); ?>"
                     >
-                        <?php echo esc_html__('Перегенерувати фід', 'eleads-woocommerce'); ?>
+                        <?php echo esc_html__('Перегенерувати фід', 'eleads-for-woocommerce'); ?>
                     </button>
-                    <button type="button" class="button" data-eleads-copy="<?php echo esc_attr((string) $feed_row['url']); ?>">
-                        <?php echo esc_html__('Копіювати URL', 'eleads-woocommerce'); ?>
+                    <button type="button" class="button" data-eleads-copy="<?php echo esc_attr((string) $eleads_feed_row['url']); ?>">
+                        <?php echo esc_html__('Копіювати URL', 'eleads-for-woocommerce'); ?>
                     </button>
                     <a
-                        href="<?php echo esc_url((string) $feed_row['url']); ?>"
-                        class="button button-secondary <?php echo esc_attr($is_ready ? '' : 'is-disabled'); ?>"
-                        <?php echo $is_ready ? '' : 'aria-disabled="true" tabindex="-1"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                        href="<?php echo esc_url((string) $eleads_feed_row['url']); ?>"
+                        class="button button-secondary <?php echo esc_attr($eleads_is_ready ? '' : 'is-disabled'); ?>"
+                        <?php echo $eleads_is_ready ? '' : 'aria-disabled="true" tabindex="-1"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         target="_blank"
                     >
-                        <?php echo esc_html__('Завантажити', 'eleads-woocommerce'); ?>
+                        <?php echo esc_html__('Завантажити', 'eleads-for-woocommerce'); ?>
                     </a>
-                    <span class="eleads-status <?php echo esc_attr($is_ready ? 'eleads-status--ready' : 'eleads-status--muted'); ?>">
+                    <span class="eleads-status <?php echo esc_attr($eleads_is_ready ? 'eleads-status--ready' : 'eleads-status--muted'); ?>">
                         <?php
-                        echo $is_ready
-                            ? esc_html(sprintf(__('Фід готовий, пропозицій: %d', 'eleads-woocommerce'), (int) ($status['offers'] ?? 0)))
-                            : esc_html__('Фід ще не створено', 'eleads-woocommerce');
+                        echo $eleads_is_ready
+                            ? esc_html($eleads_ready_message)
+                            : esc_html__('Фід ще не створено', 'eleads-for-woocommerce');
                         ?>
                     </span>
                     <div class="eleads-progress" data-eleads-progress-wrap>
-                        <div class="eleads-progress__bar" style="width: <?php echo esc_attr((string) $progress); ?>%;" data-eleads-progress-bar></div>
+                        <div class="eleads-progress__bar" style="width: <?php echo esc_attr((string) $eleads_progress); ?>%;" data-eleads-progress-bar></div>
                     </div>
                     <div class="eleads-progress__meta" data-eleads-progress-meta>
-                        <?php echo esc_html(sprintf(__('Товарів: %1$d / %2$d', 'eleads-woocommerce'), $processed, $total)); ?>
+                        <?php echo esc_html($eleads_progress_message); ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -90,22 +104,22 @@ if (! defined('ABSPATH')) {
     </section>
 
     <section class="eleads-section" aria-labelledby="eleads-sync-title">
-        <h2 id="eleads-sync-title"><?php echo esc_html__('Синхронізація', 'eleads-woocommerce'); ?></h2>
+        <h2 id="eleads-sync-title"><?php echo esc_html__('Синхронізація', 'eleads-for-woocommerce'); ?></h2>
 
         <label class="eleads-toggle">
             <input type="checkbox" name="sync_enabled" value="1" <?php checked((bool) $settings['sync_enabled']); ?>>
             <span class="eleads-toggle__control" aria-hidden="true"></span>
-            <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути синхронізацію', 'eleads-woocommerce'); ?></span>
+            <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути синхронізацію', 'eleads-for-woocommerce'); ?></span>
         </label>
     </section>
 
     <section class="eleads-section" aria-labelledby="eleads-widgets-title">
-        <h2 id="eleads-widgets-title"><?php echo esc_html__('Віджет E-Leads', 'eleads-woocommerce'); ?></h2>
+        <h2 id="eleads-widgets-title"><?php echo esc_html__('Віджет E-Leads', 'eleads-for-woocommerce'); ?></h2>
 
         <label class="eleads-toggle">
             <input type="checkbox" name="widgets_enabled" value="1" <?php checked((bool) $settings['widgets_enabled']); ?>>
             <span class="eleads-toggle__control" aria-hidden="true"></span>
-            <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути віджет E-Leads на сайті', 'eleads-woocommerce'); ?></span>
+            <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути віджет E-Leads на сайті', 'eleads-for-woocommerce'); ?></span>
         </label>
 
         <p class="description">
@@ -113,7 +127,7 @@ if (! defined('ABSPATH')) {
             echo wp_kses(
                 sprintf(
                     /* translators: 1: service domain, 2: docs URL, 3: landing URL, 4: privacy policy URL, 5: terms URL, 6: cookie policy URL, 7: security URL. */
-                    __('Після увімкнення сайт буде завантажувати скрипт віджета E-Leads із зовнішнього сервісу <code>%1$s</code>. Увімкнення цієї опції означає згоду на підключення сервісу E-Leads на публічних сторінках сайту. Докладніше: <a href="%2$s" target="_blank" rel="noopener noreferrer">документація</a>, <a href="%3$s" target="_blank" rel="noopener noreferrer">про E-Leads</a>, <a href="%4$s" target="_blank" rel="noopener noreferrer">політика конфіденційності</a>, <a href="%5$s" target="_blank" rel="noopener noreferrer">умови використання</a>, <a href="%6$s" target="_blank" rel="noopener noreferrer">cookie policy</a>, <a href="%7$s" target="_blank" rel="noopener noreferrer">security</a>.', 'eleads-woocommerce'),
+                    __('Після увімкнення сайт буде завантажувати скрипт віджета E-Leads із зовнішнього сервісу <code>%1$s</code>. Увімкнення цієї опції означає згоду на підключення сервісу E-Leads на публічних сторінках сайту. Докладніше: <a href="%2$s" target="_blank" rel="noopener noreferrer">документація</a>, <a href="%3$s" target="_blank" rel="noopener noreferrer">про E-Leads</a>, <a href="%4$s" target="_blank" rel="noopener noreferrer">політика конфіденційності</a>, <a href="%5$s" target="_blank" rel="noopener noreferrer">умови використання</a>, <a href="%6$s" target="_blank" rel="noopener noreferrer">cookie policy</a>, <a href="%7$s" target="_blank" rel="noopener noreferrer">security</a>.', 'eleads-for-woocommerce'),
                     'api.e-leads.net',
                     esc_url('https://e-leads.net/docs/'),
                     esc_url('https://e-leads.net/'),
@@ -137,15 +151,15 @@ if (! defined('ABSPATH')) {
 
     <section class="eleads-section" aria-labelledby="eleads-categories-title">
         <div class="eleads-section__heading">
-            <h2 id="eleads-categories-title"><?php echo esc_html__('Категорії', 'eleads-woocommerce'); ?></h2>
+            <h2 id="eleads-categories-title"><?php echo esc_html__('Категорії', 'eleads-for-woocommerce'); ?></h2>
             <?php if ($categories !== []) : ?>
                 <div class="eleads-inline-actions">
                     <button type="button" class="eleads-link-button" data-eleads-categories-action="select">
-                        <?php echo esc_html__('Позначити всі', 'eleads-woocommerce'); ?>
+                        <?php echo esc_html__('Позначити всі', 'eleads-for-woocommerce'); ?>
                     </button>
                     <span aria-hidden="true">|</span>
                     <button type="button" class="eleads-link-button" data-eleads-categories-action="clear">
-                        <?php echo esc_html__('Зняти позначення', 'eleads-woocommerce'); ?>
+                        <?php echo esc_html__('Зняти позначення', 'eleads-for-woocommerce'); ?>
                     </button>
                 </div>
             <?php endif; ?>
@@ -155,8 +169,8 @@ if (! defined('ABSPATH')) {
             <div class="eleads-placeholder eleads-card">
                 <div class="eleads-placeholder__icon">+</div>
                 <div>
-                    <strong><?php echo esc_html__('Категорії не знайдено', 'eleads-woocommerce'); ?></strong>
-                    <p><?php echo esc_html__('Створіть категорії товарів WooCommerce, щоб вибрати їх для вивантаження.', 'eleads-woocommerce'); ?></p>
+                    <strong><?php echo esc_html__('Категорії не знайдено', 'eleads-for-woocommerce'); ?></strong>
+                    <p><?php echo esc_html__('Створіть категорії товарів WooCommerce, щоб вибрати їх для вивантаження.', 'eleads-for-woocommerce'); ?></p>
                 </div>
             </div>
         <?php else : ?>
@@ -172,23 +186,23 @@ if (! defined('ABSPATH')) {
         <?php endif; ?>
 
         <p class="description">
-            <?php echo esc_html__('Позначте категорії для вивантаження. Якщо нічого не вибрано — товари не вивантажуються.', 'eleads-woocommerce'); ?>
+            <?php echo esc_html__('Позначте категорії для вивантаження. Якщо нічого не вибрано — товари не вивантажуються.', 'eleads-for-woocommerce'); ?>
         </p>
     </section>
 
     <section class="eleads-section" aria-labelledby="eleads-attribute-filters-title">
         <div class="eleads-filter-header">
-            <h2 id="eleads-attribute-filters-title"><?php echo esc_html__('Атрибути для фільтрації', 'eleads-woocommerce'); ?></h2>
+            <h2 id="eleads-attribute-filters-title"><?php echo esc_html__('Атрибути для фільтрації', 'eleads-for-woocommerce'); ?></h2>
             <div class="eleads-filter-header__controls">
                 <?php if ($attributes !== []) : ?>
                     <div class="eleads-filter-actions <?php echo esc_attr(empty($settings['attribute_filters_enabled']) ? 'is-hidden' : ''); ?>" data-eleads-filter-actions="attribute-filters">
                         <div class="eleads-inline-actions">
                             <button type="button" class="eleads-link-button" data-eleads-filter-action="select" data-eleads-filter-target="attribute-filters">
-                                <?php echo esc_html__('Позначити всі', 'eleads-woocommerce'); ?>
+                                <?php echo esc_html__('Позначити всі', 'eleads-for-woocommerce'); ?>
                             </button>
                             <span aria-hidden="true">|</span>
                             <button type="button" class="eleads-link-button" data-eleads-filter-action="clear" data-eleads-filter-target="attribute-filters">
-                                <?php echo esc_html__('Зняти позначення', 'eleads-woocommerce'); ?>
+                                <?php echo esc_html__('Зняти позначення', 'eleads-for-woocommerce'); ?>
                             </button>
                         </div>
                     </div>
@@ -202,7 +216,7 @@ if (! defined('ABSPATH')) {
                         <?php checked((bool) $settings['attribute_filters_enabled']); ?>
                     >
                     <span class="eleads-toggle__control" aria-hidden="true"></span>
-                    <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір атрибутів для фільтрації', 'eleads-woocommerce'); ?></span>
+                    <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір атрибутів для фільтрації', 'eleads-for-woocommerce'); ?></span>
                 </label>
             </div>
         </div>
@@ -213,7 +227,7 @@ if (! defined('ABSPATH')) {
         >
             <?php if ($attributes === []) : ?>
                 <p class="eleads-empty-text">
-                    <?php echo esc_html__('Атрибути WooCommerce ще не створені.', 'eleads-woocommerce'); ?>
+                    <?php echo esc_html__('Атрибути WooCommerce ще не створені.', 'eleads-for-woocommerce'); ?>
                 </p>
             <?php else : ?>
                 <?php
@@ -230,17 +244,17 @@ if (! defined('ABSPATH')) {
 
     <section class="eleads-section" aria-labelledby="eleads-option-filters-title">
         <div class="eleads-filter-header">
-            <h2 id="eleads-option-filters-title"><?php echo esc_html__('Опції для фільтрації', 'eleads-woocommerce'); ?></h2>
+            <h2 id="eleads-option-filters-title"><?php echo esc_html__('Опції для фільтрації', 'eleads-for-woocommerce'); ?></h2>
             <div class="eleads-filter-header__controls">
                 <?php if ($attributes !== []) : ?>
                     <div class="eleads-filter-actions <?php echo esc_attr(empty($settings['option_filters_enabled']) ? 'is-hidden' : ''); ?>" data-eleads-filter-actions="option-filters">
                         <div class="eleads-inline-actions">
                             <button type="button" class="eleads-link-button" data-eleads-filter-action="select" data-eleads-filter-target="option-filters">
-                                <?php echo esc_html__('Позначити всі', 'eleads-woocommerce'); ?>
+                                <?php echo esc_html__('Позначити всі', 'eleads-for-woocommerce'); ?>
                             </button>
                             <span aria-hidden="true">|</span>
                             <button type="button" class="eleads-link-button" data-eleads-filter-action="clear" data-eleads-filter-target="option-filters">
-                                <?php echo esc_html__('Зняти позначення', 'eleads-woocommerce'); ?>
+                                <?php echo esc_html__('Зняти позначення', 'eleads-for-woocommerce'); ?>
                             </button>
                         </div>
                     </div>
@@ -254,7 +268,7 @@ if (! defined('ABSPATH')) {
                         <?php checked((bool) $settings['option_filters_enabled']); ?>
                     >
                     <span class="eleads-toggle__control" aria-hidden="true"></span>
-                    <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір опцій для фільтрації', 'eleads-woocommerce'); ?></span>
+                    <span class="eleads-toggle__label"><?php echo esc_html__('Увімкнути вибір опцій для фільтрації', 'eleads-for-woocommerce'); ?></span>
                 </label>
             </div>
         </div>
@@ -265,7 +279,7 @@ if (! defined('ABSPATH')) {
         >
             <?php if ($attributes === []) : ?>
                 <p class="eleads-empty-text">
-                    <?php echo esc_html__('Опції будуть доступні після створення атрибутів WooCommerce.', 'eleads-woocommerce'); ?>
+                    <?php echo esc_html__('Опції будуть доступні після створення атрибутів WooCommerce.', 'eleads-for-woocommerce'); ?>
                 </p>
             <?php else : ?>
                 <?php
@@ -281,20 +295,20 @@ if (! defined('ABSPATH')) {
     </section>
 
     <section class="eleads-section" aria-labelledby="eleads-grouping-title">
-        <h2 id="eleads-grouping-title"><?php echo esc_html__('Групування товарів', 'eleads-woocommerce'); ?></h2>
+        <h2 id="eleads-grouping-title"><?php echo esc_html__('Групування товарів', 'eleads-for-woocommerce'); ?></h2>
 
         <label class="eleads-toggle">
             <input type="checkbox" name="grouped_products" value="1" <?php checked((bool) $settings['grouped_products']); ?>>
             <span class="eleads-toggle__control" aria-hidden="true"></span>
-            <span class="eleads-toggle__label"><?php echo esc_html__('Групувати варіації товару в одну пропозицію', 'eleads-woocommerce'); ?></span>
+            <span class="eleads-toggle__label"><?php echo esc_html__('Групувати варіації товару в одну пропозицію', 'eleads-for-woocommerce'); ?></span>
         </label>
     </section>
 
     <section class="eleads-section eleads-section--grid" aria-labelledby="eleads-options-title">
-        <h2 id="eleads-options-title"><?php echo esc_html__('Параметри експорту', 'eleads-woocommerce'); ?></h2>
+        <h2 id="eleads-options-title"><?php echo esc_html__('Параметри експорту', 'eleads-for-woocommerce'); ?></h2>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('Розмір зображень', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('Розмір зображень', 'eleads-for-woocommerce'); ?></span>
             <select name="image_size">
                 <?php foreach ($image_sizes as $image_size => $label) : ?>
                     <option value="<?php echo esc_attr($image_size); ?>" <?php selected($settings['image_size'], $image_size); ?>>
@@ -305,47 +319,47 @@ if (! defined('ABSPATH')) {
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__("Ключ доступу (необов'язково)", 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__("Ключ доступу (необов'язково)", 'eleads-for-woocommerce'); ?></span>
             <input type="text" name="feed_key" value="<?php echo esc_attr((string) $settings['feed_key']); ?>" autocomplete="off">
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('Назва магазину', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('Назва магазину', 'eleads-for-woocommerce'); ?></span>
             <input type="text" name="store_name" value="<?php echo esc_attr((string) $settings['store_name']); ?>">
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('Email', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('Email', 'eleads-for-woocommerce'); ?></span>
             <input type="email" name="email" value="<?php echo esc_attr((string) $settings['email']); ?>">
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('URL магазину', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('URL магазину', 'eleads-for-woocommerce'); ?></span>
             <input type="url" name="store_url" value="<?php echo esc_attr((string) $settings['store_url']); ?>">
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('Валюта', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('Валюта', 'eleads-for-woocommerce'); ?></span>
             <input type="text" name="currency" value="<?php echo esc_attr((string) $settings['currency']); ?>">
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('Ліміт зображень (picture)', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('Ліміт зображень (picture)', 'eleads-for-woocommerce'); ?></span>
             <input type="number" name="picture_limit" value="<?php echo esc_attr((string) $settings['picture_limit']); ?>" min="0" max="20">
         </label>
 
         <label class="eleads-field">
-            <span><?php echo esc_html__('Джерело short_description', 'eleads-woocommerce'); ?></span>
+            <span><?php echo esc_html__('Джерело short_description', 'eleads-for-woocommerce'); ?></span>
             <select name="short_description_source">
-                <option value="short_description" <?php selected($settings['short_description_source'], 'short_description'); ?>><?php echo esc_html__('Короткий опис (анотація)', 'eleads-woocommerce'); ?></option>
-                <option value="meta_description" <?php selected($settings['short_description_source'], 'meta_description'); ?>><?php echo esc_html__('Meta description', 'eleads-woocommerce'); ?></option>
-                <option value="description" <?php selected($settings['short_description_source'], 'description'); ?>><?php echo esc_html__('Повний опис', 'eleads-woocommerce'); ?></option>
+                <option value="short_description" <?php selected($settings['short_description_source'], 'short_description'); ?>><?php echo esc_html__('Короткий опис (анотація)', 'eleads-for-woocommerce'); ?></option>
+                <option value="meta_description" <?php selected($settings['short_description_source'], 'meta_description'); ?>><?php echo esc_html__('Meta description', 'eleads-for-woocommerce'); ?></option>
+                <option value="description" <?php selected($settings['short_description_source'], 'description'); ?>><?php echo esc_html__('Повний опис', 'eleads-for-woocommerce'); ?></option>
             </select>
         </label>
     </section>
     </fieldset>
 
     <p class="submit eleads-submit">
-        <button type="submit" class="button button-primary" <?php disabled(empty($settings['api_key_valid'])); ?>><?php echo esc_html__('Застосувати', 'eleads-woocommerce'); ?></button>
+        <button type="submit" class="button button-primary" <?php disabled(empty($settings['api_key_valid'])); ?>><?php echo esc_html__('Застосувати', 'eleads-for-woocommerce'); ?></button>
     </p>
 </form>

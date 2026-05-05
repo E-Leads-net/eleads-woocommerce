@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Admin;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class View
 {
     /**

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class ProductQuery
 {
     /**
@@ -19,6 +23,7 @@ final class ProductQuery
         ];
 
         if ($category_ids !== []) {
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Category filtering is required for export settings.
             $args['tax_query'] = [
                 [
                     'taxonomy'         => 'product_cat',
@@ -93,15 +98,17 @@ final class ProductQuery
      */
     public function batch(array $category_ids, int $last_product_id, int $limit): array
     {
-        $query = new \WP_Query(array_merge($this->query_args($category_ids), [
-            'posts_per_page' => max(1, $limit),
-            'fields'         => 'ids',
-            'no_found_rows'  => true,
-            'orderby'        => 'ID',
-            'order'          => 'ASC',
-            'post__not_in'   => [],
-            'date_query'     => [],
-            'meta_query'     => [],
+            $query = new \WP_Query(array_merge($this->query_args($category_ids), [
+                'posts_per_page' => max(1, $limit),
+                'fields'         => 'ids',
+                'no_found_rows'  => true,
+                'orderby'        => 'ID',
+                'order'          => 'ASC',
+                // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- Empty placeholders keep query args stable for filters.
+                'post__not_in'   => [],
+                'date_query'     => [],
+                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Empty placeholders keep query args stable for filters.
+                'meta_query'     => [],
         ], [
             'eleads_last_product_id' => $last_product_id,
         ]));
@@ -154,6 +161,7 @@ final class ProductQuery
         ];
 
         if ($category_ids !== []) {
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Category filtering is required for export settings.
             $args['tax_query'] = [
                 [
                     'taxonomy'         => 'product_cat',

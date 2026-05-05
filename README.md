@@ -23,8 +23,8 @@ The plugin provides:
 
 ## Installation
 1. In WordPress admin, go to **Plugins -> Add New -> Upload Plugin**.
-2. Upload release archive: `eleads-woocommerce.zip`.
-3. Activate **E-Leads WooCommerce**.
+2. Upload release archive: `eleads-for-woocommerce.zip`.
+3. Activate **E-Leads for WooCommerce**.
 4. Open **E-Leads** in the admin menu.
 5. Enter and save a valid E-Leads API key in the **API Key** tab.
 
@@ -561,18 +561,18 @@ Service information and policies:
 
 ## Plugin Structure
 ```text
-eleads-woocommerce/
-├─ eleads-woocommerce.php
+eleads-for-woocommerce/
+├─ eleads-for-woocommerce.php
 ├─ readme.txt
 ├─ uninstall.php
 ├─ assets/
 │  ├─ admin.css
 │  └─ admin.js
 ├─ languages/
-│  ├─ eleads-woocommerce.pot
-│  ├─ eleads-woocommerce-en_US.po/.mo
-│  ├─ eleads-woocommerce-ru_RU.po/.mo
-│  └─ eleads-woocommerce-uk_UA.po/.mo
+│  ├─ eleads-for-woocommerce.pot
+│  ├─ eleads-for-woocommerce-en_US.po/.mo
+│  ├─ eleads-for-woocommerce-ru_RU.po/.mo
+│  └─ eleads-for-woocommerce-uk_UA.po/.mo
 ├─ src/
 │  ├─ Admin/
 │  ├─ Api/
@@ -593,8 +593,8 @@ eleads-woocommerce/
 ```
 
 ## Repository & Release
-- Repository: `https://github.com/E-Leads-net/eleads-woocommerce`
-- Release archive: `eleads-woocommerce.zip`
+- Repository: `https://github.com/E-Leads-net/eleads-for-woocommerce`
+- Release archive: `eleads-for-woocommerce.zip`
 
 ## Notes for WordPress.org Review
 - The plugin does not modify WordPress, WooCommerce, or theme files.

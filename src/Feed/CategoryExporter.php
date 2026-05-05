@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use WP_Term;
 
 final class CategoryExporter

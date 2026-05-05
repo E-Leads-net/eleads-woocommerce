@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: E-Leads WooCommerce
+ * Plugin Name: E-Leads for WooCommerce
  * Plugin URI: https://e-leads.net/
  * Description: WooCommerce export and synchronization module for E-Leads.
  * Version: 0.2.0
@@ -8,7 +8,7 @@
  * Author URI: https://e-leads.net/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: eleads-woocommerce
+ * Text Domain: eleads-for-woocommerce
  * Domain Path: /languages
  * Requires at least: 6.0
  * Tested up to: 6.9
@@ -45,11 +45,5 @@ register_deactivation_hook(__FILE__, static function (): void {
 });
 
 add_action('plugins_loaded', static function (): void {
-    load_plugin_textdomain(
-        'eleads-woocommerce',
-        false,
-        dirname(plugin_basename(__FILE__)) . '/languages'
-    );
-
     \Eleads\WooCommerce\Plugin::instance()->boot();
 });

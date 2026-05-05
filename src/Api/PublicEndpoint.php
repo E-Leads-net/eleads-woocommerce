@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Api;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Feed\Endpoint;
 use Eleads\WooCommerce\Feed\Generator;
 use Eleads\WooCommerce\Feed\Language;
@@ -107,7 +111,7 @@ final class PublicEndpoint
 
     private function serve_api(string $api): void
     {
-        $method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+        $method = strtoupper(isset($_SERVER['REQUEST_METHOD']) ? sanitize_key((string) wp_unslash($_SERVER['REQUEST_METHOD'])) : 'GET');
 
         if ($api === 'generate') {
             $this->require_method($method, 'POST');
@@ -222,6 +226,7 @@ final class PublicEndpoint
      */
     private function payload(): array
     {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Public API requests are authenticated with the Authorization bearer token.
         $payload = wp_unslash($_POST);
         if ($payload !== []) {
             return is_array($payload) ? $payload : [];
@@ -247,6 +252,7 @@ final class PublicEndpoint
 
     private function query_string(string $key): string
     {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public API query parameters are authenticated with the Authorization bearer token.
         return isset($_GET[$key]) ? sanitize_key((string) wp_unslash($_GET[$key])) : '';
     }
 

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class StatusRepository
 {
     private PathResolver $paths;
@@ -32,8 +36,8 @@ final class StatusRepository
             return $this->normalize($language, [
                 'status'      => 'ready',
                 'language'    => $language,
-                'updated_at'  => date('Y-m-d H:i:s', (int) filemtime($feed_path)),
-                'finished_at' => date('Y-m-d H:i:s', (int) filemtime($feed_path)),
+                'updated_at'  => gmdate('Y-m-d H:i:s', (int) filemtime($feed_path)),
+                'finished_at' => gmdate('Y-m-d H:i:s', (int) filemtime($feed_path)),
                 'size'        => (int) filesize($feed_path),
                 'offers'      => 0,
                 'error'       => '',
@@ -48,7 +52,7 @@ final class StatusRepository
         $this->write($language, [
             'status'      => 'running',
             'language'    => $language,
-            'updated_at'  => date('Y-m-d H:i:s'),
+            'updated_at'  => gmdate('Y-m-d H:i:s'),
             'finished_at' => '',
             'size'        => 0,
             'offers'      => 0,
@@ -65,7 +69,7 @@ final class StatusRepository
         $current = $this->get($language);
         $this->write($language, array_merge($current, [
             'status'          => 'running',
-            'updated_at'      => date('Y-m-d H:i:s'),
+            'updated_at'      => gmdate('Y-m-d H:i:s'),
             'finished_at'     => '',
             'processed'       => $processed,
             'total'           => $total,
@@ -81,8 +85,8 @@ final class StatusRepository
         $this->write($language, [
             'status'      => 'ready',
             'language'    => $language,
-            'updated_at'  => date('Y-m-d H:i:s'),
-            'finished_at' => date('Y-m-d H:i:s'),
+            'updated_at'  => gmdate('Y-m-d H:i:s'),
+            'finished_at' => gmdate('Y-m-d H:i:s'),
             'size'        => $size,
             'offers'      => $offers,
             'processed'   => (int) ($this->get($language)['processed'] ?? 0),
@@ -98,8 +102,8 @@ final class StatusRepository
         $this->write($language, [
             'status'      => 'failed',
             'language'    => $language,
-            'updated_at'  => date('Y-m-d H:i:s'),
-            'finished_at' => date('Y-m-d H:i:s'),
+            'updated_at'  => gmdate('Y-m-d H:i:s'),
+            'finished_at' => gmdate('Y-m-d H:i:s'),
             'size'        => 0,
             'offers'      => 0,
             'processed'   => (int) ($this->get($language)['processed'] ?? 0),
@@ -118,7 +122,7 @@ final class StatusRepository
         $path = $this->paths->status_path($language);
         $tmp = $path . '.tmp';
         file_put_contents($tmp, wp_json_encode($this->normalize($language, $status), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
-        rename($tmp, $path);
+        $this->move($tmp, $path);
     }
 
     /**
@@ -140,5 +144,19 @@ final class StatusRepository
             'last_product_id' => (int) ($status['last_product_id'] ?? 0),
             'error'       => (string) ($status['error'] ?? ''),
         ];
+    }
+
+    private function move(string $source, string $destination): void
+    {
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        WP_Filesystem();
+
+        global $wp_filesystem;
+
+        if ($wp_filesystem instanceof \WP_Filesystem_Base && $wp_filesystem->move($source, $destination, true)) {
+            return;
+        }
+
+        throw new \RuntimeException('move_failed');
     }
 }

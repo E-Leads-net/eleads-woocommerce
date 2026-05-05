@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Api;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class Routes
 {
     private const DEFAULT_DASHBOARD_BASE = 'https://dashboard.e-leads.net';

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Settings\SettingsRepository;
 
 final class Generator
@@ -73,7 +77,7 @@ final class Generator
             $this->statuses->running($language, $total, self::BATCH_SIZE);
 
             $this->writer->start($language, [
-                'feed_date' => date('Y-m-d H:i'),
+                'feed_date' => gmdate('Y-m-d H:i'),
                 'shop_name' => (string) $settings['store_name'],
                 'email'     => (string) $settings['email'],
                 'shop_url'  => (string) $settings['store_url'],

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Settings;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class SettingsRepository
 {
     private const OPTION_NAME = 'eleads_woocommerce_settings';

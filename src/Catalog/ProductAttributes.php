@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Catalog;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class ProductAttributes
 {
     /**

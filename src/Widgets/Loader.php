@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Widgets;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Api\Routes;
 use Eleads\WooCommerce\Settings\SettingsRepository;
 
@@ -18,18 +22,22 @@ final class Loader
 
     public function register(): void
     {
-        add_action('wp_footer', [$this, 'render'], 20);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue']);
     }
 
-    public function render(): void
+    public function enqueue(): void
     {
         if (is_admin() || ! (bool) $this->settings->get('widgets_enabled')) {
             return;
         }
 
-        printf(
-            '<script src="%s" async></script>' . PHP_EOL,
-            esc_url(Routes::widgets_script_url())
+        wp_enqueue_script(
+            'eleads-for-woocommerce-widgets',
+            Routes::widgets_script_url(),
+            [],
+            ELEADS_WOOCOMMERCE_VERSION,
+            true
         );
+        wp_script_add_data('eleads-for-woocommerce-widgets', 'strategy', 'async');
     }
 }

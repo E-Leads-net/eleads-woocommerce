@@ -9,6 +9,8 @@
 if (! defined('ABSPATH')) {
     exit;
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are scoped to this view file.
 ?>
 
 <ul class="eleads-category-tree">

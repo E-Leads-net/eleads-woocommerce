@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Admin;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Feed\Generator;
 use Eleads\WooCommerce\Feed\Language;
 
@@ -22,7 +26,7 @@ final class FeedActionHandler
     public function generate(): void
     {
         if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have permission to generate feeds.', 'eleads-woocommerce'));
+            wp_die(esc_html__('You do not have permission to generate feeds.', 'eleads-for-woocommerce'));
         }
 
         check_admin_referer('eleads_generate_feed');
@@ -37,7 +41,7 @@ final class FeedActionHandler
         }
 
         wp_safe_redirect(add_query_arg([
-            'page'              => 'eleads-woocommerce',
+            'page'              => 'eleads-for-woocommerce',
             'tab'               => 'export',
             'eleads_generated'  => $generated,
         ], admin_url('admin.php')));
@@ -79,6 +83,7 @@ final class FeedActionHandler
 
     private function request_language(): string
     {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- AJAX nonce is verified in guard_ajax() before this method is called.
         return $this->language->normalize(isset($_POST['language']) ? sanitize_key((string) wp_unslash($_POST['language'])) : '');
     }
 }

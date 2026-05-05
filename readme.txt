@@ -1,4 +1,4 @@
-=== E-Leads WooCommerce ===
+=== E-Leads for WooCommerce ===
 Contributors: eleads
 Tags: woocommerce, product feed, ecommerce, synchronization, seo
 Requires at least: 6.0
@@ -12,7 +12,7 @@ Export WooCommerce products to E-Leads, synchronize catalog updates, and serve E
 
 == Description ==
 
-E-Leads WooCommerce connects a WooCommerce store to the E-Leads service. The plugin can generate product feeds, expose authenticated feed endpoints for the E-Leads dashboard, synchronize WooCommerce product changes, and render E-Leads SEO pages when enabled for the connected API key.
+E-Leads for WooCommerce connects a WooCommerce store to the E-Leads service. The plugin can generate product feeds, expose authenticated feed endpoints for the E-Leads dashboard, synchronize WooCommerce product changes, and render E-Leads SEO pages when enabled for the connected API key.
 
 The plugin requires WooCommerce. If WooCommerce is not active, the plugin does not boot its main functionality and shows an admin notice.
 
@@ -40,7 +40,7 @@ Service documentation and policies:
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/eleads-woocommerce/` directory, or install the plugin through the WordPress plugins screen.
+1. Upload the plugin files to the `/wp-content/plugins/eleads-for-woocommerce/` directory, or install the plugin through the WordPress plugins screen.
 2. Activate the plugin through the Plugins screen in WordPress.
 3. Make sure WooCommerce is installed and active.
 4. Go to E-Leads in the WordPress admin menu and enter your E-Leads API key.

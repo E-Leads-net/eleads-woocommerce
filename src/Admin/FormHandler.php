@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Admin;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Settings\Sanitizer;
 use Eleads\WooCommerce\Settings\SettingsRepository;
 use Eleads\WooCommerce\Api\DashboardTokenValidator;
@@ -39,9 +43,10 @@ final class FormHandler
         }
 
         if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have permission to save these settings.', 'eleads-woocommerce'));
+            wp_die(esc_html__('You do not have permission to save these settings.', 'eleads-for-woocommerce'));
         }
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The nonce is verified by each action-specific save handler.
         $action = isset($_POST['eleads_action']) ? sanitize_key((string) wp_unslash($_POST['eleads_action'])) : '';
 
         match ($action) {
@@ -56,7 +61,7 @@ final class FormHandler
     {
         check_admin_referer('eleads_save_api_key', 'eleads_api_key_nonce');
 
-        $settings = $this->sanitizer->api_key($_POST);
+        $settings = $this->sanitizer->api_key(wp_unslash($_POST));
         $status = $this->token_validator->validate((string) $settings['api_key']);
 
         $settings['api_key_valid'] = $status['ok'];
@@ -74,7 +79,7 @@ final class FormHandler
     {
         check_admin_referer('eleads_save_export_settings', 'eleads_export_nonce');
 
-        $this->settings->update($this->sanitizer->export_settings($_POST));
+        $this->settings->update($this->sanitizer->export_settings(wp_unslash($_POST)));
         $this->redirect('export');
     }
 
@@ -85,7 +90,7 @@ final class FormHandler
         $current = $this->settings->all();
         $enabled = ! empty($current['api_key_valid'])
             && ! empty($current['seo_pages_allowed'])
-            && isset($_POST['seo_pages_enabled']);
+            && isset(wp_unslash($_POST)['seo_pages_enabled']);
 
         $this->settings->update(['seo_pages_enabled' => $enabled]);
 
@@ -100,9 +105,10 @@ final class FormHandler
 
     private function is_settings_page_post(): bool
     {
-        return is_admin()
-            && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST'
-            && isset($_POST['eleads_action']);
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? sanitize_key((string) wp_unslash($_SERVER['REQUEST_METHOD'])) : '';
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- This only checks whether the request should be routed to a nonce-protected handler.
+        return is_admin() && $request_method === 'POST' && isset($_POST['eleads_action']);
     }
 
     private function redirect(string $tab): void
@@ -110,7 +116,7 @@ final class FormHandler
         wp_safe_redirect(
             add_query_arg(
                 [
-                    'page'          => 'eleads-woocommerce',
+                    'page'          => 'eleads-for-woocommerce',
                     'tab'           => $tab,
                     'eleads_saved'  => '1',
                 ],

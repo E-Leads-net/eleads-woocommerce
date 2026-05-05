@@ -1,12 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR E-Leads
-# This file is distributed under the same license as the E-Leads WooCommerce package.
+# This file is distributed under the same license as the E-Leads for WooCommerce package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: E-Leads WooCommerce 0.2.0\n"
+"Project-Id-Version: E-Leads for WooCommerce 0.2.0\n"
 "Report-Msgid-Bugs-To: support@e-leads.net\n"
 "POT-Creation-Date: 2026-05-04 23:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -54,7 +54,7 @@ msgstr ""
 #: src/Admin/Notice.php:17
 #, php-format
 msgid ""
-"E-Leads WooCommerce requires %s to be installed and active. The module is "
+"E-Leads for WooCommerce requires %s to be installed and active. The module is "
 "currently disabled."
 msgstr ""
 
@@ -62,7 +62,7 @@ msgstr ""
 #: src/Admin/Notice.php:36
 #, php-format
 msgid ""
-"API endpoint-и E-Leads WooCommerce потребують красивих постійних посилань. "
+"API endpoint-и E-Leads for WooCommerce потребують красивих постійних посилань. "
 "Увімкніть їх у <a href=\"%s\">налаштуваннях постійних посилань</a>."
 msgstr ""
 

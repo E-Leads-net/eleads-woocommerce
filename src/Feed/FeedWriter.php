@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use WP_Term;
 
 final class FeedWriter
@@ -100,9 +104,23 @@ final class FeedWriter
         $temp = $this->paths->temp_path($language);
         $final = $this->paths->final_path($language);
         file_put_contents($temp, '</offers></shop></yml_catalog>', FILE_APPEND | LOCK_EX);
-        rename($temp, $final);
+        $this->move($temp, $final);
 
         return (int) filesize($final);
+    }
+
+    private function move(string $source, string $destination): void
+    {
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        WP_Filesystem();
+
+        global $wp_filesystem;
+
+        if ($wp_filesystem instanceof \WP_Filesystem_Base && $wp_filesystem->move($source, $destination, true)) {
+            return;
+        }
+
+        throw new \RuntimeException('move_failed');
     }
 
     private function escape(string $value): string

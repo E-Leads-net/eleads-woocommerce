@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Admin;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class Notice
 {
     public static function missing_woocommerce(): void
@@ -14,7 +18,7 @@ final class Notice
 
         $message = sprintf(
             /* translators: %s: WooCommerce plugin name. */
-            __('E-Leads WooCommerce requires %s to be installed and active. The module is currently disabled.', 'eleads-woocommerce'),
+            __('E-Leads for WooCommerce requires %s to be installed and active. The module is currently disabled.', 'eleads-for-woocommerce'),
             '<strong>WooCommerce</strong>'
         );
 
@@ -33,7 +37,7 @@ final class Notice
         $settings_url = admin_url('options-permalink.php');
         $message = sprintf(
             /* translators: %s: permalinks settings URL. */
-            __('API endpoint-и E-Leads WooCommerce потребують красивих постійних посилань. Увімкніть їх у <a href="%s">налаштуваннях постійних посилань</a>.', 'eleads-woocommerce'),
+            __('API endpoint-и E-Leads for WooCommerce потребують красивих постійних посилань. Увімкніть їх у <a href="%s">налаштуваннях постійних посилань</a>.', 'eleads-for-woocommerce'),
             esc_url($settings_url)
         );
 

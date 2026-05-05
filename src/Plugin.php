@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Admin\Notice;
 use Eleads\WooCommerce\Admin\Assets;
 use Eleads\WooCommerce\Admin\Menu;

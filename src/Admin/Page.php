@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Admin;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Catalog\ProductCategoryTree;
 use Eleads\WooCommerce\Catalog\ProductAttributes;
 use Eleads\WooCommerce\Settings\SettingsRepository;
@@ -58,7 +62,7 @@ final class Page
     public function render(): void
     {
         if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have permission to access this page.', 'eleads-woocommerce'));
+            wp_die(esc_html__('You do not have permission to access this page.', 'eleads-for-woocommerce'));
         }
 
         $settings = $this->settings->all();
@@ -75,7 +79,9 @@ final class Page
             'image_sizes' => $active_tab === self::TAB_EXPORT ? $this->image_sizes() : [],
             'feed_rows'  => $active_tab === self::TAB_EXPORT ? $this->feed_rows() : [],
             'seo_sitemap_url' => $this->seo_sitemap->url(),
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin notice flags are read-only redirect parameters.
             'saved'      => isset($_GET['eleads_saved']) && $_GET['eleads_saved'] === '1',
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin notice flags are read-only redirect parameters.
             'generated'  => isset($_GET['eleads_generated']) ? sanitize_key((string) wp_unslash($_GET['eleads_generated'])) : '',
         ]);
     }
@@ -84,7 +90,7 @@ final class Page
     {
         return add_query_arg(
             [
-                'page' => 'eleads-woocommerce',
+                'page' => 'eleads-for-woocommerce',
                 'tab'  => $tab,
             ],
             admin_url('admin.php')
@@ -94,6 +100,7 @@ final class Page
     private function get_active_tab(array $settings): string
     {
         $default_tab = empty($settings['api_key_valid']) ? self::TAB_API_KEY : self::TAB_EXPORT;
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The tab parameter only selects a read-only admin view.
         $tab = isset($_GET['tab']) ? sanitize_key((string) wp_unslash($_GET['tab'])) : $default_tab;
 
         if (! array_key_exists($tab, $this->tabs($settings))) {
@@ -112,19 +119,19 @@ final class Page
 
         if (empty($settings['api_key_valid'])) {
             return [
-                self::TAB_API_KEY => __('API Key', 'eleads-woocommerce'),
+                self::TAB_API_KEY => __('API Key', 'eleads-for-woocommerce'),
             ];
         }
 
         $tabs = [
-            self::TAB_EXPORT  => __('Налаштування експорту', 'eleads-woocommerce'),
+            self::TAB_EXPORT  => __('Налаштування експорту', 'eleads-for-woocommerce'),
         ];
 
         if (! empty($settings['seo_pages_allowed'])) {
-            $tabs[self::TAB_SEO] = __('SEO', 'eleads-woocommerce');
+            $tabs[self::TAB_SEO] = __('SEO', 'eleads-for-woocommerce');
         }
 
-        $tabs[self::TAB_API_KEY] = __('API Key', 'eleads-woocommerce');
+        $tabs[self::TAB_API_KEY] = __('API Key', 'eleads-for-woocommerce');
 
         return $tabs;
     }
@@ -155,10 +162,10 @@ final class Page
         }
 
         if ($items === []) {
-            $items['thumbnail'] = __('Thumbnail', 'eleads-woocommerce');
+            $items['thumbnail'] = __('Thumbnail', 'eleads-for-woocommerce');
         }
 
-        $items['full'] = __('Original image', 'eleads-woocommerce');
+        $items['full'] = __('Original image', 'eleads-for-woocommerce');
 
         return $items;
     }

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Settings\SettingsRepository;
 
 final class Endpoint
@@ -59,11 +63,12 @@ final class Endpoint
         $settings = $this->settings->all();
         $access_key = (string) $settings['feed_key'];
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public feed access is protected by the configured feed key.
         $request_key = isset($_GET['key']) ? sanitize_text_field((string) wp_unslash($_GET['key'])) : '';
         if ($access_key !== '' && $request_key !== $access_key) {
             status_header(401);
             header('Content-Type: text/plain; charset=utf-8');
-            echo esc_html__('Forbidden', 'eleads-woocommerce');
+            echo esc_html__('Forbidden', 'eleads-for-woocommerce');
             exit;
         }
 
@@ -71,7 +76,7 @@ final class Endpoint
         if (! is_file($feed_path)) {
             status_header(404);
             header('Content-Type: text/plain; charset=utf-8');
-            echo esc_html__('Not Found', 'eleads-woocommerce');
+            echo esc_html__('Not Found', 'eleads-for-woocommerce');
             exit;
         }
 

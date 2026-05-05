@@ -19,14 +19,16 @@
 if (! defined('ABSPATH')) {
     exit;
 }
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables are scoped to this view file.
 ?>
 
 <div class="wrap eleads-admin">
     <div class="eleads-admin__header">
         <div>
-            <h1 class="eleads-admin__title"><?php echo esc_html__('E-Leads', 'eleads-woocommerce'); ?></h1>
+            <h1 class="eleads-admin__title"><?php echo esc_html__('E-Leads', 'eleads-for-woocommerce'); ?></h1>
             <p class="eleads-admin__subtitle">
-                <?php echo esc_html__('WooCommerce export and synchronization module', 'eleads-woocommerce'); ?>
+                <?php echo esc_html__('WooCommerce export and synchronization module', 'eleads-for-woocommerce'); ?>
             </p>
         </div>
         <div class="eleads-admin__meta">
@@ -34,7 +36,7 @@ if (! defined('ABSPATH')) {
                 <?php echo esc_html(sprintf('Version %s', ELEADS_WOOCOMMERCE_VERSION)); ?>
             </span>
             <span class="eleads-health">
-                <?php echo esc_html__('WooCommerce active', 'eleads-woocommerce'); ?>
+                <?php echo esc_html__('WooCommerce active', 'eleads-for-woocommerce'); ?>
             </span>
         </div>
     </div>
@@ -42,20 +44,20 @@ if (! defined('ABSPATH')) {
     <div class="eleads-admin__panel">
         <?php if ($saved) : ?>
             <div class="eleads-notice">
-                <?php echo esc_html__('Налаштування збережено.', 'eleads-woocommerce'); ?>
+                <?php echo esc_html__('Налаштування збережено.', 'eleads-for-woocommerce'); ?>
             </div>
         <?php endif; ?>
         <?php if ($generated === '1') : ?>
             <div class="eleads-notice">
-                <?php echo esc_html__('Фід згенеровано.', 'eleads-woocommerce'); ?>
+                <?php echo esc_html__('Фід згенеровано.', 'eleads-for-woocommerce'); ?>
             </div>
         <?php elseif ($generated === '0') : ?>
             <div class="eleads-notice eleads-notice--error">
-                <?php echo esc_html__('Не вдалося згенерувати фід.', 'eleads-woocommerce'); ?>
+                <?php echo esc_html__('Не вдалося згенерувати фід.', 'eleads-for-woocommerce'); ?>
             </div>
         <?php endif; ?>
 
-        <nav class="eleads-admin__tabs" aria-label="<?php echo esc_attr__('E-Leads tabs', 'eleads-woocommerce'); ?>">
+        <nav class="eleads-admin__tabs" aria-label="<?php echo esc_attr__('E-Leads tabs', 'eleads-for-woocommerce'); ?>">
             <?php foreach ($tabs as $tab => $label) : ?>
                 <a
                     href="<?php echo esc_url($tab_url($tab)); ?>"

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Seo;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 use Eleads\WooCommerce\Api\SeoSitemap;
 use Eleads\WooCommerce\Feed\Language;
 use Eleads\WooCommerce\Settings\SettingsRepository;
@@ -175,7 +179,7 @@ final class PageRenderer
         woocommerce_product_loop_start();
 
         foreach ($products as $product_item) {
-            global $post, $product;
+            global $post;
 
             $post = get_post($product_item->get_id());
             if ($post instanceof \WP_Post) {
@@ -183,7 +187,8 @@ final class PageRenderer
                 wc_setup_product_data($post);
             }
 
-            $product = $product_item;
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce templates require the global product object.
+            $GLOBALS['product'] = $product_item;
             wc_get_template_part('content', 'product');
         }
 
@@ -283,7 +288,7 @@ final class PageRenderer
         if ($template !== '') {
             include $template;
         } else {
-            echo esc_html__('Not found', 'eleads-woocommerce');
+            echo esc_html__('Not found', 'eleads-for-woocommerce');
         }
         exit;
     }

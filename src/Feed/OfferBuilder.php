@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class OfferBuilder
 {
     /**
@@ -379,7 +383,7 @@ final class OfferBuilder
         $options = array_values(array_unique($options));
         if ($options !== []) {
             $params[] = [
-                'name'   => __('Опції', 'eleads-woocommerce'),
+                'name'   => __('Опції', 'eleads-for-woocommerce'),
                 'value'  => implode(' | ', $options),
                 'filter' => false,
             ];

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Eleads\WooCommerce\Feed;
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 final class Language
 {
     /**
@@ -53,6 +57,7 @@ final class Language
         }
 
         if (has_filter('wpml_default_language')) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML exposes this public hook name.
             return $this->normalize_code((string) apply_filters('wpml_default_language', null));
         }
 
@@ -78,7 +83,9 @@ final class Language
         }
 
         if (has_action('wpml_switch_language')) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML exposes this public hook name.
             $previous = apply_filters('wpml_current_language', null);
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML exposes this public hook name.
             do_action('wpml_switch_language', $language);
 
             return is_string($previous) ? $previous : null;
@@ -99,6 +106,7 @@ final class Language
         }
 
         if (has_action('wpml_switch_language')) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML exposes this public hook name.
             do_action('wpml_switch_language', $language);
         }
     }
@@ -161,6 +169,7 @@ final class Language
             return [];
         }
 
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML exposes this public hook name.
         $languages = apply_filters('wpml_active_languages', null, [
             'skip_missing' => 0,
         ]);
