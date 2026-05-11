@@ -68,7 +68,7 @@ final class Endpoint
         if ($access_key !== '' && $request_key !== $access_key) {
             status_header(401);
             header('Content-Type: text/plain; charset=utf-8');
-            echo esc_html__('Forbidden', 'eleads-for-woocommerce');
+            echo esc_html__('Forbidden', 'e-leads-for-woocommerce');
             exit;
         }
 
@@ -76,7 +76,7 @@ final class Endpoint
         if (! is_file($feed_path)) {
             status_header(404);
             header('Content-Type: text/plain; charset=utf-8');
-            echo esc_html__('Not Found', 'eleads-for-woocommerce');
+            echo esc_html__('Not Found', 'e-leads-for-woocommerce');
             exit;
         }
 

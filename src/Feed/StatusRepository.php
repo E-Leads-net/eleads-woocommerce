@@ -25,7 +25,7 @@ final class StatusRepository
         $status_path = $this->paths->status_path($language);
 
         if (is_file($status_path)) {
-            $status = json_decode((string) file_get_contents($status_path), true);
+            $status = json_decode((string) file_get_contents($status_path), true); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Feed job metadata is stored as a local JSON file.
             if (is_array($status)) {
                 return $this->normalize($language, $status);
             }
@@ -121,7 +121,7 @@ final class StatusRepository
     {
         $path = $this->paths->status_path($language);
         $tmp = $path . '.tmp';
-        file_put_contents($tmp, wp_json_encode($this->normalize($language, $status), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+        file_put_contents($tmp, wp_json_encode($this->normalize($language, $status), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Feed job metadata is written atomically through a temp file.
         $this->move($tmp, $path);
     }
 

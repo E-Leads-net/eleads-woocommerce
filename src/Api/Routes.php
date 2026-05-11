@@ -48,9 +48,9 @@ final class Routes
         return add_query_arg('lang', $language, self::seo_pages_url() . '/' . rawurlencode($slug));
     }
 
-    public static function widgets_script_url(): string
+    public static function widgets_loader_tag_url(): string
     {
-        return self::widgets_base() . '/v1/widgets-loader.js';
+        return self::widgets_base() . '/v1/widgets-loader-tag';
     }
 
     private static function dashboard_base(): string

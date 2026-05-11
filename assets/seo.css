@@ -1,0 +1,13 @@
+.eleads-seo-page {
+    width: 100%;
+}
+
+.eleads-seo-page__inner {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 40px 20px;
+}
+
+.eleads-seo-products {
+    margin: 32px 0;
+}

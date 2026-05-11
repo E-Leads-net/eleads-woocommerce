@@ -20,10 +20,10 @@ final class Menu
     public function register(): void
     {
         add_menu_page(
-            __('E-Leads', 'eleads-for-woocommerce'),
-            __('E-Leads', 'eleads-for-woocommerce'),
+            __('E-Leads', 'e-leads-for-woocommerce'),
+            __('E-Leads', 'e-leads-for-woocommerce'),
             'manage_woocommerce',
-            'eleads-for-woocommerce',
+            'e-leads-for-woocommerce',
             [$this->page, 'render'],
             'dashicons-chart-line',
             56

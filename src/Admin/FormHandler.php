@@ -36,29 +36,9 @@ final class FormHandler
         $this->seo_sitemap     = $seo_sitemap;
     }
 
-    public function handle(): void
+    public function save_api_key_action(): void
     {
-        if (! $this->is_settings_page_post()) {
-            return;
-        }
-
-        if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have permission to save these settings.', 'eleads-for-woocommerce'));
-        }
-
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The nonce is verified by each action-specific save handler.
-        $action = isset($_POST['eleads_action']) ? sanitize_key((string) wp_unslash($_POST['eleads_action'])) : '';
-
-        match ($action) {
-            'save_api_key' => $this->save_api_key(),
-            'save_export_settings' => $this->save_export_settings(),
-            'save_seo_settings' => $this->save_seo_settings(),
-            default => null,
-        };
-    }
-
-    private function save_api_key(): void
-    {
+        $this->guard();
         check_admin_referer('eleads_save_api_key', 'eleads_api_key_nonce');
 
         $settings = $this->sanitizer->api_key(wp_unslash($_POST));
@@ -72,19 +52,21 @@ final class FormHandler
         }
 
         $this->settings->update($settings);
-        $this->redirect('api-key');
+        $this->redirect($status['ok'] ? 'export' : 'api-key', $status['ok'] ? '1' : '0');
     }
 
-    private function save_export_settings(): void
+    public function save_export_settings_action(): void
     {
+        $this->guard();
         check_admin_referer('eleads_save_export_settings', 'eleads_export_nonce');
 
         $this->settings->update($this->sanitizer->export_settings(wp_unslash($_POST)));
         $this->redirect('export');
     }
 
-    private function save_seo_settings(): void
+    public function save_seo_settings_action(): void
     {
+        $this->guard();
         check_admin_referer('eleads_save_seo_settings', 'eleads_seo_nonce');
 
         $current = $this->settings->all();
@@ -103,22 +85,21 @@ final class FormHandler
         $this->redirect('seo');
     }
 
-    private function is_settings_page_post(): bool
+    private function guard(): void
     {
-        $request_method = isset($_SERVER['REQUEST_METHOD']) ? sanitize_key((string) wp_unslash($_SERVER['REQUEST_METHOD'])) : '';
-
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- This only checks whether the request should be routed to a nonce-protected handler.
-        return is_admin() && $request_method === 'POST' && isset($_POST['eleads_action']);
+        if (! current_user_can('manage_woocommerce')) {
+            wp_die(esc_html__('You do not have permission to save these settings.', 'e-leads-for-woocommerce'));
+        }
     }
 
-    private function redirect(string $tab): void
+    private function redirect(string $tab, string $saved = '1'): void
     {
         wp_safe_redirect(
             add_query_arg(
                 [
-                    'page'          => 'eleads-for-woocommerce',
+                    'page'          => 'e-leads-for-woocommerce',
                     'tab'           => $tab,
-                    'eleads_saved'  => '1',
+                    'eleads_saved'  => $saved,
                 ],
                 admin_url('admin.php')
             )

@@ -26,7 +26,7 @@ final class FeedActionHandler
     public function generate(): void
     {
         if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have permission to generate feeds.', 'eleads-for-woocommerce'));
+            wp_die(esc_html__('You do not have permission to generate feeds.', 'e-leads-for-woocommerce'));
         }
 
         check_admin_referer('eleads_generate_feed');
@@ -41,7 +41,7 @@ final class FeedActionHandler
         }
 
         wp_safe_redirect(add_query_arg([
-            'page'              => 'eleads-for-woocommerce',
+            'page'              => 'e-leads-for-woocommerce',
             'tab'               => 'export',
             'eleads_generated'  => $generated,
         ], admin_url('admin.php')));

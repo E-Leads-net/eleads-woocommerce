@@ -23,7 +23,7 @@ The plugin provides:
 
 ## Installation
 1. In WordPress admin, go to **Plugins -> Add New -> Upload Plugin**.
-2. Upload release archive: `eleads-for-woocommerce.zip`.
+2. Upload release archive: `e-leads-for-woocommerce.zip`.
 3. Activate **E-Leads for WooCommerce**.
 4. Open **E-Leads** in the admin menu.
 5. Enter and save a valid E-Leads API key in the **API Key** tab.
@@ -536,19 +536,19 @@ There is no built-in plugin update tab. Plugin updates are expected to be handle
 ## Widget Loader
 The widget is disabled by default.
 
-When enabled by the store owner, public pages load:
+When enabled by the store owner, the plugin requests the loader tag from:
 
 ```text
-https://api.e-leads.net/v1/widgets-loader.js
+https://api.e-leads.net/v1/widgets-loader-tag
 ```
 
-The script is added through WordPress `wp_footer`. The plugin does not modify theme files.
+The script URL from the returned tag is cached and enqueued through WordPress `wp_enqueue_script()`. The plugin does not modify theme files.
 
 ## External Services
 This plugin connects to E-Leads services when the store owner enters an API key and enables the relevant features.
 
 - API key validation, SEO page data, sitemap sync, feed discovery, and product synchronization use `https://dashboard.e-leads.net/`.
-- The optional E-Leads widget loads its script from `https://api.e-leads.net/v1/widgets-loader.js`.
+- The optional E-Leads widget requests its loader tag from `https://api.e-leads.net/v1/widgets-loader-tag` and enqueues the returned script URL.
 
 Service information and policies:
 
@@ -561,18 +561,18 @@ Service information and policies:
 
 ## Plugin Structure
 ```text
-eleads-for-woocommerce/
-├─ eleads-for-woocommerce.php
+e-leads-for-woocommerce/
+├─ e-leads-for-woocommerce.php
 ├─ readme.txt
 ├─ uninstall.php
 ├─ assets/
 │  ├─ admin.css
 │  └─ admin.js
 ├─ languages/
-│  ├─ eleads-for-woocommerce.pot
-│  ├─ eleads-for-woocommerce-en_US.po/.mo
-│  ├─ eleads-for-woocommerce-ru_RU.po/.mo
-│  └─ eleads-for-woocommerce-uk_UA.po/.mo
+│  ├─ e-leads-for-woocommerce.pot
+│  ├─ e-leads-for-woocommerce-en_US.po/.mo
+│  ├─ e-leads-for-woocommerce-ru_RU.po/.mo
+│  └─ e-leads-for-woocommerce-uk_UA.po/.mo
 ├─ src/
 │  ├─ Admin/
 │  ├─ Api/
@@ -593,8 +593,8 @@ eleads-for-woocommerce/
 ```
 
 ## Repository & Release
-- Repository: `https://github.com/E-Leads-net/eleads-for-woocommerce`
-- Release archive: `eleads-for-woocommerce.zip`
+- Repository: `https://github.com/E-Leads-net/eleads-woocommerce`
+- Release archive: `e-leads-for-woocommerce.zip`
 
 ## Notes for WordPress.org Review
 - The plugin does not modify WordPress, WooCommerce, or theme files.

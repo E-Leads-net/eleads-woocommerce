@@ -126,7 +126,9 @@ final class Plugin
             $form_handler = new FormHandler($settings, new Sanitizer(), new DashboardTokenValidator(), $seo_sitemap);
             $feed_actions = new FeedActionHandler($generator, $language);
 
-            add_action('admin_init', [$form_handler, 'handle']);
+            add_action('admin_post_eleads_save_api_key', [$form_handler, 'save_api_key_action']);
+            add_action('admin_post_eleads_save_export_settings', [$form_handler, 'save_export_settings_action']);
+            add_action('admin_post_eleads_save_seo_settings', [$form_handler, 'save_seo_settings_action']);
             add_action('admin_notices', [Notice::class, 'plain_permalinks']);
             add_action('admin_post_eleads_generate_feed', [$feed_actions, 'generate']);
             add_action('wp_ajax_eleads_feed_start', [$feed_actions, 'ajax_start']);

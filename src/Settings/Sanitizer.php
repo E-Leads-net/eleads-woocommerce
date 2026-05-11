@@ -48,6 +48,7 @@ final class Sanitizer
                 'short_description'
             ),
             'category_ids'             => $this->category_ids($input['category_ids'] ?? []),
+            'category_selection_initialized' => true,
             'grouped_products'         => isset($input['grouped_products']),
             'attribute_filters_enabled' => isset($input['attribute_filters_enabled']),
             'attribute_filter_slugs'    => $this->slugs($input['attribute_filter_slugs'] ?? []),

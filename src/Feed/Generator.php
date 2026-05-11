@@ -67,7 +67,7 @@ final class Generator
     {
         $language = $this->language->normalize($language);
         $settings = $this->settings->all();
-        $selected_category_ids = array_map('absint', (array) $settings['category_ids']);
+        $selected_category_ids = $this->selected_category_ids($settings);
         $previous_language = $this->language->switch_to($language);
 
         try {
@@ -111,7 +111,7 @@ final class Generator
         }
 
         $settings = $this->settings->all();
-        $selected_category_ids = array_map('absint', (array) $settings['category_ids']);
+        $selected_category_ids = $this->selected_category_ids($settings);
         $previous_language = $this->language->switch_to($language);
 
         try {
@@ -154,5 +154,18 @@ final class Generator
             $this->language->restore($previous_language);
             throw $e;
         }
+    }
+
+    /**
+     * @param array<string, mixed> $settings
+     * @return array<int, int>
+     */
+    private function selected_category_ids(array $settings): array
+    {
+        if (! empty($settings['category_selection_initialized'])) {
+            return array_map('absint', (array) $settings['category_ids']);
+        }
+
+        return $this->categories->all_category_ids();
     }
 }

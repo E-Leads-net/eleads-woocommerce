@@ -232,7 +232,7 @@ final class PublicEndpoint
             return is_array($payload) ? $payload : [];
         }
 
-        $raw = file_get_contents('php://input');
+        $raw = file_get_contents('php://input'); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Raw JSON body is read from the request stream.
         if (! is_string($raw) || trim($raw) === '') {
             return [];
         }
@@ -287,7 +287,7 @@ final class PublicEndpoint
     {
         status_header($status);
         header('Content-Type: application/json; charset=utf-8');
-        echo wp_json_encode($payload, JSON_UNESCAPED_UNICODE);
+        echo wp_json_encode($payload, JSON_UNESCAPED_UNICODE); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON is encoded by wp_json_encode() and served with the JSON content type.
         exit;
     }
 }

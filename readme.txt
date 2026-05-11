@@ -27,7 +27,7 @@ The plugin sends requests to `https://dashboard.e-leads.net/` for:
 * Feed discovery from the E-Leads dashboard.
 * SEO sitemap and SEO page data when SEO pages are enabled.
 
-When the optional E-Leads widget setting is enabled, public site pages load the widget script from `https://api.e-leads.net/v1/widgets-loader.js`. This setting is disabled by default and must be enabled by a store administrator.
+When the optional E-Leads widget setting is enabled, public site pages request the loader tag from `https://api.e-leads.net/v1/widgets-loader-tag` and enqueue the returned script URL. This setting is disabled by default and must be enabled by a store administrator.
 
 Service documentation and policies:
 
@@ -40,7 +40,7 @@ Service documentation and policies:
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/eleads-for-woocommerce/` directory, or install the plugin through the WordPress plugins screen.
+1. Upload the plugin files to the `/wp-content/plugins/e-leads-for-woocommerce/` directory, or install the plugin through the WordPress plugins screen.
 2. Activate the plugin through the Plugins screen in WordPress.
 3. Make sure WooCommerce is installed and active.
 4. Go to E-Leads in the WordPress admin menu and enter your E-Leads API key.

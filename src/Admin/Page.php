@@ -62,11 +62,12 @@ final class Page
     public function render(): void
     {
         if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have permission to access this page.', 'eleads-for-woocommerce'));
+            wp_die(esc_html__('You do not have permission to access this page.', 'e-leads-for-woocommerce'));
         }
 
         $settings = $this->settings->all();
         $active_tab = $this->get_active_tab($settings);
+        $categories = $active_tab === self::TAB_EXPORT ? $this->category_tree->all() : [];
 
         $this->view->render('admin/page', [
             'active_tab' => $active_tab,
@@ -74,13 +75,16 @@ final class Page
             'tab_url'    => [$this, 'tab_url'],
             'tab_view'   => $this->tab_view($active_tab),
             'settings'   => $settings,
-            'categories' => $active_tab === self::TAB_EXPORT ? $this->category_tree->all() : [],
+            'categories' => $categories,
+            'selected_category_ids' => $this->selected_category_ids($settings, $categories),
             'attributes' => $active_tab === self::TAB_EXPORT ? $this->attributes->all() : [],
             'image_sizes' => $active_tab === self::TAB_EXPORT ? $this->image_sizes() : [],
             'feed_rows'  => $active_tab === self::TAB_EXPORT ? $this->feed_rows() : [],
             'seo_sitemap_url' => $this->seo_sitemap->url(),
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin notice flags are read-only redirect parameters.
             'saved'      => isset($_GET['eleads_saved']) && $_GET['eleads_saved'] === '1',
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin notice flags are read-only redirect parameters.
+            'save_error' => isset($_GET['eleads_saved']) && $_GET['eleads_saved'] === '0',
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin notice flags are read-only redirect parameters.
             'generated'  => isset($_GET['eleads_generated']) ? sanitize_key((string) wp_unslash($_GET['eleads_generated'])) : '',
         ]);
@@ -90,7 +94,7 @@ final class Page
     {
         return add_query_arg(
             [
-                'page' => 'eleads-for-woocommerce',
+                'page' => 'e-leads-for-woocommerce',
                 'tab'  => $tab,
             ],
             admin_url('admin.php')
@@ -119,19 +123,19 @@ final class Page
 
         if (empty($settings['api_key_valid'])) {
             return [
-                self::TAB_API_KEY => __('API Key', 'eleads-for-woocommerce'),
+                self::TAB_API_KEY => __('API Key', 'e-leads-for-woocommerce'),
             ];
         }
 
         $tabs = [
-            self::TAB_EXPORT  => __('Налаштування експорту', 'eleads-for-woocommerce'),
+            self::TAB_EXPORT  => __('Налаштування експорту', 'e-leads-for-woocommerce'),
         ];
 
         if (! empty($settings['seo_pages_allowed'])) {
-            $tabs[self::TAB_SEO] = __('SEO', 'eleads-for-woocommerce');
+            $tabs[self::TAB_SEO] = __('SEO', 'e-leads-for-woocommerce');
         }
 
-        $tabs[self::TAB_API_KEY] = __('API Key', 'eleads-for-woocommerce');
+        $tabs[self::TAB_API_KEY] = __('API Key', 'e-leads-for-woocommerce');
 
         return $tabs;
     }
@@ -162,12 +166,43 @@ final class Page
         }
 
         if ($items === []) {
-            $items['thumbnail'] = __('Thumbnail', 'eleads-for-woocommerce');
+            $items['thumbnail'] = __('Thumbnail', 'e-leads-for-woocommerce');
         }
 
-        $items['full'] = __('Original image', 'eleads-for-woocommerce');
+        $items['full'] = __('Original image', 'e-leads-for-woocommerce');
 
         return $items;
+    }
+
+    /**
+     * @param array<string, mixed> $settings
+     * @param array<int, array<string, mixed>> $categories
+     * @return array<int, int>
+     */
+    private function selected_category_ids(array $settings, array $categories): array
+    {
+        if (! empty($settings['category_selection_initialized'])) {
+            return array_map('absint', (array) $settings['category_ids']);
+        }
+
+        return $this->flatten_category_ids($categories);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $categories
+     * @return array<int, int>
+     */
+    private function flatten_category_ids(array $categories): array
+    {
+        $ids = [];
+        foreach ($categories as $category) {
+            $ids[] = absint($category['id'] ?? 0);
+            if (! empty($category['children']) && is_array($category['children'])) {
+                $ids = array_merge($ids, $this->flatten_category_ids($category['children']));
+            }
+        }
+
+        return array_values(array_unique(array_filter($ids)));
     }
 
     /**

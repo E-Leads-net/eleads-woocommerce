@@ -51,4 +51,22 @@ final class CategoryExporter
             return isset($include[(int) $term->term_id]);
         }));
     }
+
+    /**
+     * @return array<int, int>
+     */
+    public function all_category_ids(): array
+    {
+        $terms = get_terms([
+            'taxonomy'   => 'product_cat',
+            'hide_empty' => false,
+            'fields'     => 'ids',
+        ]);
+
+        if (is_wp_error($terms) || ! is_array($terms)) {
+            return [];
+        }
+
+        return array_values(array_map('absint', $terms));
+    }
 }

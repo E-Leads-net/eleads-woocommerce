@@ -383,7 +383,7 @@ final class OfferBuilder
         $options = array_values(array_unique($options));
         if ($options !== []) {
             $params[] = [
-                'name'   => __('Опції', 'eleads-for-woocommerce'),
+                'name'   => __('Опції', 'e-leads-for-woocommerce'),
                 'value'  => implode(' | ', $options),
                 'filter' => false,
             ];

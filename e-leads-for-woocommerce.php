@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: E-Leads for WooCommerce
- * Plugin URI: https://e-leads.net/
+ * Plugin URI: https://github.com/E-Leads-net/eleads-woocommerce
  * Description: WooCommerce export and synchronization module for E-Leads.
  * Version: 0.2.0
  * Author: E-Leads
  * Author URI: https://e-leads.net/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: eleads-for-woocommerce
+ * Text Domain: e-leads-for-woocommerce
  * Domain Path: /languages
  * Requires at least: 6.0
  * Tested up to: 6.9

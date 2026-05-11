@@ -13,6 +13,8 @@ use Eleads\WooCommerce\Settings\SettingsRepository;
 
 final class Loader
 {
+    private const TRANSIENT_KEY = 'eleads_woocommerce_widgets_script_url';
+
     private SettingsRepository $settings;
 
     public function __construct(SettingsRepository $settings)
@@ -31,13 +33,79 @@ final class Loader
             return;
         }
 
+        $script = $this->script_data();
+        if ($script['url'] === '') {
+            return;
+        }
+
         wp_enqueue_script(
-            'eleads-for-woocommerce-widgets',
-            Routes::widgets_script_url(),
+            'e-leads-for-woocommerce-widgets',
+            $script['url'],
             [],
             ELEADS_WOOCOMMERCE_VERSION,
             true
         );
-        wp_script_add_data('eleads-for-woocommerce-widgets', 'strategy', 'async');
+
+        if ($script['strategy'] !== '') {
+            wp_script_add_data('e-leads-for-woocommerce-widgets', 'strategy', $script['strategy']);
+        }
+    }
+
+    /**
+     * @return array{url: string, strategy: string}
+     */
+    private function script_data(): array
+    {
+        $cached = get_transient(self::TRANSIENT_KEY);
+        if (is_array($cached) && isset($cached['url'], $cached['strategy']) && is_string($cached['url']) && is_string($cached['strategy'])) {
+            return $cached;
+        }
+
+        $response = wp_remote_get(Routes::widgets_loader_tag_url(), [
+            'timeout' => 5,
+        ]);
+
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            return [
+                'url'      => '',
+                'strategy' => '',
+            ];
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $script = $this->extract_script_data($body);
+        if ($script['url'] === '') {
+            return $script;
+        }
+
+        set_transient(self::TRANSIENT_KEY, $script, DAY_IN_SECONDS);
+
+        return $script;
+    }
+
+    /**
+     * @return array{url: string, strategy: string}
+     */
+    private function extract_script_data(string $tag): array
+    {
+        if (! preg_match('/<script\b[^>]*\bsrc=(["\'])(.*?)\1[^>]*>/i', $tag, $matches)) {
+            return [
+                'url'      => '',
+                'strategy' => '',
+            ];
+        }
+
+        $script_tag = (string) $matches[0];
+        $strategy = '';
+        if (preg_match('/\bdefer\b/i', $script_tag)) {
+            $strategy = 'defer';
+        } elseif (preg_match('/\basync\b/i', $script_tag)) {
+            $strategy = 'async';
+        }
+
+        return [
+            'url'      => esc_url_raw((string) $matches[2]),
+            'strategy' => $strategy,
+        ];
     }
 }

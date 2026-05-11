@@ -49,7 +49,7 @@ final class FeedWriter
         $lines[] = '</categories>';
         $lines[] = '<offers>';
 
-        file_put_contents($this->paths->temp_path($language), implode('', $lines), LOCK_EX);
+        file_put_contents($this->paths->temp_path($language), implode('', $lines), LOCK_EX); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Feed XML is generated as a file for large catalogs.
     }
 
     /**
@@ -95,7 +95,7 @@ final class FeedWriter
         }
 
         if ($chunks !== []) {
-            file_put_contents($this->paths->temp_path($language), implode('', $chunks), FILE_APPEND | LOCK_EX);
+            file_put_contents($this->paths->temp_path($language), implode('', $chunks), FILE_APPEND | LOCK_EX); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Batch append avoids holding large feeds in memory.
         }
     }
 
@@ -103,7 +103,7 @@ final class FeedWriter
     {
         $temp = $this->paths->temp_path($language);
         $final = $this->paths->final_path($language);
-        file_put_contents($temp, '</offers></shop></yml_catalog>', FILE_APPEND | LOCK_EX);
+        file_put_contents($temp, '</offers></shop></yml_catalog>', FILE_APPEND | LOCK_EX); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Final XML closing tags are appended to the generated feed file.
         $this->move($temp, $final);
 
         return (int) filesize($final);
