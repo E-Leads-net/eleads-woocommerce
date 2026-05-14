@@ -285,9 +285,6 @@ final class PublicEndpoint
      */
     private function json(array $payload, int $status = 200): void
     {
-        status_header($status);
-        header('Content-Type: application/json; charset=utf-8');
-        echo wp_json_encode($payload, JSON_UNESCAPED_UNICODE); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON is encoded by wp_json_encode() and served with the JSON content type.
-        exit;
+        wp_send_json($payload, $status, JSON_UNESCAPED_UNICODE);
     }
 }

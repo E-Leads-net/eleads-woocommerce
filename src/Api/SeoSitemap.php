@@ -114,7 +114,14 @@ final class SeoSitemap
     {
         status_header(200);
         header('Content-Type: application/xml; charset=utf-8');
-        echo $this->build($this->slugs()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+
+        foreach ($this->unique($this->slugs()) as $item) {
+            echo '  <url><loc>' . esc_xml($this->slug_url($item['slug'], $item['lang'])) . '</loc></url>' . PHP_EOL;
+        }
+
+        echo '</urlset>' . PHP_EOL;
         exit;
     }
 
@@ -204,25 +211,6 @@ final class SeoSitemap
         }
 
         return $this->unique($slugs);
-    }
-
-    /**
-     * @param array<int, array{slug: string, lang: string}> $slugs
-     */
-    private function build(array $slugs): string
-    {
-        $lines = [
-            '<?xml version="1.0" encoding="UTF-8"?>',
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        ];
-
-        foreach ($this->unique($slugs) as $item) {
-            $lines[] = '  <url><loc>' . esc_xml($this->slug_url($item['slug'], $item['lang'])) . '</loc></url>';
-        }
-
-        $lines[] = '</urlset>';
-
-        return implode(PHP_EOL, $lines) . PHP_EOL;
     }
 
     /**

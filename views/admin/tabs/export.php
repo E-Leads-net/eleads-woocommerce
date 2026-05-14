@@ -81,7 +81,10 @@ if (! defined('ABSPATH')) {
                     <a
                         href="<?php echo esc_url((string) $eleads_feed_row['url']); ?>"
                         class="button button-secondary <?php echo esc_attr($eleads_is_ready ? '' : 'is-disabled'); ?>"
-                        <?php echo $eleads_is_ready ? '' : 'aria-disabled="true" tabindex="-1"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                        <?php if (! $eleads_is_ready) : ?>
+                            aria-disabled="true"
+                            tabindex="-1"
+                        <?php endif; ?>
                         target="_blank"
                     >
                         <?php echo esc_html__('Завантажити', 'e-leads-for-woocommerce'); ?>
